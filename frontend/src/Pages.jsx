@@ -8,7 +8,7 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-// import Register from './Register';
+import Register from './Register';
 import Login from './Login';
 // import Dashboard from './Dashboard';
 
@@ -49,14 +49,14 @@ function Pages() {
         </>
       ) : (
         <>
-          {/* <Link to="/register">Register</Link>
-          &nbsp;|&nbsp; */}
+          <Link to="/register">Register</Link>
+          &nbsp;|&nbsp;
           <Link to="/login">Login</Link>
         </>
       )}
       <hr />
       <Routes>
-        {/* <Route path="/register" element={<Register token={token} successJob={successJob} />} /> */}
+        <Route path="/register" element={<Register token={token} successJob={successJob} />} />
         <Route path="/login" element={<Login token={token} successJob={successJob} />} />
         {/* <Route path="/dashboard" element={<Dashboard />} /> */}
       </Routes>
