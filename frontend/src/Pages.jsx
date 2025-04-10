@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
-  BrowserRouter as Router,
   Routes,
   Route,
   Link,
@@ -28,7 +27,7 @@ function Pages() {
 
   const logout = async () => {
     try {
-      const response = await axios.post('http://localhost:5005/admin/auth/logout', {}, {
+      await axios.post('http://localhost:5005/admin/auth/logout', {}, {
         headers: {
           'Authorization': `Bearer ${token}`,
         }
