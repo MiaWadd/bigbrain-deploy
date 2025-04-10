@@ -4,6 +4,7 @@ import axios from 'axios';
 
 function Register({ successJob, token }) {
     const [email, setEmail] = useState('');
+    const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     // const navigate = useNavigate();
@@ -44,7 +45,16 @@ function Register({ successJob, token }) {
                             onChange={e => setEmail(e.target.value)}
                             required
                             type="email"
-                            placeholder="Enter your email"
+                            className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                        />
+                    </div>
+                    <div className="max-w-sm mx-auto mt-5">
+                        <label className="text-md font-normal text-black dark:text-white">Name</label>
+                        <input
+                            value={name} 
+                            onChange={e => setName(e.target.value)}
+                            required
+                            type="text"
                             className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
                         />
                     </div>
