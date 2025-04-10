@@ -1,18 +1,18 @@
 import { useState } from 'react';
 import axios from 'axios';
-// import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function Register({ successJob, token }) {
     const [email, setEmail] = useState('');
     const [name, setName] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
 
-    // if (token) {
-    //     console.log("Token active -> navigate to dash");
-    //     // navigate('/dashboard');
-    // }
+    if (token) {
+        console.log("Token active -> navigate to dash");
+        navigate('/home');
+    }
 
     const register = async () => {
         // Error checking

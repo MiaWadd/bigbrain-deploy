@@ -10,7 +10,7 @@ import {
 
 import Register from './Register';
 import Login from './Login';
-// import Dashboard from './Dashboard';
+import Home from './Home';
 
 function Pages() {
   const [token, setToken] = useState(null);
@@ -23,7 +23,7 @@ function Pages() {
   const successJob = (token) => {
     localStorage.setItem('token', token);
     setToken(token);
-    // navigate('/dashboard');
+    navigate('/home');
   }
 
   const logout = async () => {
@@ -58,7 +58,7 @@ function Pages() {
       <Routes>
         <Route path="/register" element={<Register token={token} successJob={successJob} />} />
         <Route path="/login" element={<Login token={token} successJob={successJob} />} />
-        {/* <Route path="/dashboard" element={<Dashboard />} /> */}
+        <Route path="/home" element={<Home />} />
       </Routes>
     </>
   );
