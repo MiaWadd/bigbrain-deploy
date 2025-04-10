@@ -24,6 +24,7 @@ function Register({ successJob, token }) {
             const response = await axios.post(`http://localhost:5005/admin/auth/register`, {
                 email: email,
                 password: password,
+                name: name
             });
             const token = response.data.token;
             successJob(token);
