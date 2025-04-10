@@ -15,25 +15,25 @@ function Register({ successJob, token }) {
   }
 
   const register = async () => {
-      // Error checking
-      if (password !== confirmPassword) {
-          alert("Password's do not match");
-          return;
-      }
-      try {
-          console.log("registering user");
-          const response = await axios.post(`http://localhost:5005/admin/auth/register`, {
-              email: email,
-              password: password,
-              name: name
-          });
-          const token = response.data.token;
-          successJob(token);
-      } catch (err) {
-          console.log("failed to register user");
-          console.log(err);
-          alert(err.response.data.error);
-      }
+    // Error checking
+    if (password !== confirmPassword) {
+      alert("Password's do not match");
+      return;
+    }
+    try {
+      console.log("registering user");
+      const response = await axios.post(`http://localhost:5005/admin/auth/register`, {
+        email: email,
+        password: password,
+        name: name
+      });
+      const token = response.data.token;
+      successJob(token);
+    } catch (err) {
+      console.log("failed to register user");
+      console.log(err);
+      alert(err.response.data.error);
+    }
   }
   return (
     <>
