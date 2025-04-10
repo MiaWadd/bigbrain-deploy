@@ -8,9 +8,9 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import Register from './Register';
+// import Register from './Register';
 import Login from './Login';
-import Dashboard from './Dashboard';
+// import Dashboard from './Dashboard';
 
 function Pages() {
   const [token, setToken] = useState(null);
@@ -23,7 +23,7 @@ function Pages() {
   const successJob = (token) => {
     localStorage.setItem('token', token);
     setToken(token);
-    navigate('/dashboard');
+    // navigate('/dashboard');
   }
 
   const logout = async () => {
@@ -49,16 +49,16 @@ function Pages() {
         </>
       ) : (
         <>
-          <Link to="/register">Register</Link>
-          &nbsp;|&nbsp;
+          {/* <Link to="/register">Register</Link>
+          &nbsp;|&nbsp; */}
           <Link to="/login">Login</Link>
         </>
       )}
       <hr />
       <Routes>
-        <Route path="/register" element={<Register token={token} successJob={successJob} />} />
+        {/* <Route path="/register" element={<Register token={token} successJob={successJob} />} /> */}
         <Route path="/login" element={<Login token={token} successJob={successJob} />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        {/* <Route path="/dashboard" element={<Dashboard />} /> */}
       </Routes>
     </>
   );
