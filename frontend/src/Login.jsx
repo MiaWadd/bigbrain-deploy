@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function Login({ successJob, token }) {
   const [email, setEmail] = useState('');
@@ -27,8 +27,8 @@ function Login({ successJob, token }) {
   return (
     <>
       <div className="mt-10 mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg outline outline-black/5 dark:bg-slate-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
-        <div>
-          <h1 className="text-xl font-large text-black dark:text-white">Login</h1>   
+        <div className='w-full'>
+          <h1 className="text-3xl text-center font-large text-black dark:text-white">Login</h1>   
           <form onSubmit={login}>
             <div className="max-w-sm mx-auto mt-5">
               <label htmlFor="login-email" className="text-md font-normal text-black dark:text-white">Email</label>
@@ -50,8 +50,12 @@ function Login({ successJob, token }) {
                 className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
-            <button type='submit' className="mt-5 px-4 py-2 w-full bg-blue-500 text-white rounded-lg hover:bg-blue-600" >{"login"}</button>
-          </form>              
+            <button type='submit' className="mt-5 px-4 py-2 w-full bg-blue-500 text-white rounded-lg hover:bg-blue-600" >{"Login"}</button>
+          </form> 
+          <p className="mt-5 text-center text-md font-normal text-black dark:text-white">
+            Don&rsquo;t have an account?{' '}
+            <Link to="/register" className="text-blue-500 hover:underline hover:text-blue-700">Register</Link>
+          </p>              
         </div>
       </div>
     </>

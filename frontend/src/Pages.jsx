@@ -3,7 +3,6 @@ import axios from 'axios';
 import {
   Routes,
   Route,
-  Link,
   useNavigate,
 } from "react-router-dom";
 
@@ -42,17 +41,16 @@ function Pages() {
 
   return (
     <>
-      {token ? (
-        <>
-          <button onClick={logout}>Logout</button>
-        </>
-      ) : (
-        <>
-          <Link to="/register">Register</Link>
-          &nbsp;|&nbsp;
-          <Link to="/login">Login</Link>
-        </>
-      )}
+      <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
+        <h1 className="text-4xl font-bold">BigBrain</h1>
+        {token && (
+          <>
+            <button onClick={logout} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+              Logout
+            </button>        
+          </>
+        )}
+      </nav>
       <hr />
       <Routes>
         <Route path="/register" element={<Register token={token} successJob={successJob} />} />
