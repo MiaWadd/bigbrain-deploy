@@ -53,7 +53,7 @@ function Login({ successJob, token }) {
             <button type='submit' className="mt-5 px-4 py-2 w-full bg-blue-500 text-white rounded-lg hover:bg-blue-600" >{"Login"}</button>
           </form> 
           <p className="mt-5 text-center text-md font-normal text-black dark:text-white">
-            Don't have an account?{' '}
+            Don&rsquo;t have an account?{' '}
             <Link to="/register" className="text-blue-500 hover:underline hover:text-blue-700">Register</Link>
           </p>              
         </div>
