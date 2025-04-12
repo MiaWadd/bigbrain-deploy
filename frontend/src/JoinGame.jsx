@@ -14,10 +14,9 @@ import axios from 'axios';
 // TODO -> verifiy name?
 
 
-function JoinGame() {
+function JoinGame({ joinSession }) {
   const [sessionId, setSessionId] = useState('');
   const [name, setName] = useState('');
-  const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
@@ -36,6 +35,7 @@ function JoinGame() {
       await axios.post(`http://localhost:5005/play/join/${sessionId}`, {
         name: name,
       });
+      joinSession(sessionId);
     } catch (err) {
       console.log(err);
       alert(err.response.data.error);

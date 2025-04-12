@@ -10,19 +10,31 @@ import Register from './Register';
 import Login from './Login';
 import Home from './Home';
 import Join from './JoinGame';
+import Play from './Play'
 
 function Pages() {
   const [token, setToken] = useState(null);
+  const [sessionId, setSessionId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     setToken(localStorage.getItem('token'));
   }, []);
 
-  const successJob = (token) => {
+  useEffect(() => {
+    setSessionId(localStorage.getItem('sessionId'));
+  }, []);
+
+  const updateToken = (token) => {
     localStorage.setItem('token', token);
     setToken(token);
     navigate('/home');
+  }
+
+  const joinSession = (sessionId) => {
+    localStorage.setItem('sessionId', sessionId);
+    setToken(sessionId);
+    navigate('/play');
   }
 
   const logout = async () => {
@@ -54,10 +66,11 @@ function Pages() {
       </nav>
       <hr />
       <Routes>
-        <Route path="/register" element={<Register token={token} successJob={successJob} />} />
-        <Route path="/login" element={<Login token={token} successJob={successJob} />} />
+        <Route path="/register" element={<Register token={token} updateToken={updateToken} />} />
+        <Route path="/login" element={<Login token={token} updateToken={updateToken} />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/join" element={<Join/>} />
+        <Route path="/join" element={<Join joinSession={joinSession}/>} />
+        <Route path="/play" element={<Play sessionId={sessionId} />} />
       </Routes>
     </>
   );
