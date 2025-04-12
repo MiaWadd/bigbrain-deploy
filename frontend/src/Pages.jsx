@@ -20,6 +20,7 @@ function Pages() {
   }, []);
 
   const successJob = (token) => {
+    console.log("success");
     localStorage.setItem('token', token);
     setToken(token);
     navigate('/home');

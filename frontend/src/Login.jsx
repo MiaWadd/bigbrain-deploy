@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -7,11 +7,16 @@ function Login({ successJob, token }) {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  if (token) {
-    navigate('/home');
-  }
+  useEffect(() => {
+    if (token) {
+      navigate('/home');
+    }
+  }, [token, navigate]);
 
-  const login = async () => {
+
+
+  const login = async (e) => {
+    e.preventDefault();
     try {
       const response = await axios.post(`http://localhost:5005/admin/auth/login`, {
         email: email,
