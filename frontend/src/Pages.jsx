@@ -9,7 +9,7 @@ import {
 import Register from './Register';
 import Login from './Login';
 import Home from './Home';
-import Play from './JoinGame';
+import Join from './JoinGame';
 
 function Pages() {
   const [token, setToken] = useState(null);
@@ -20,7 +20,6 @@ function Pages() {
   }, []);
 
   const successJob = (token) => {
-    console.log("success");
     localStorage.setItem('token', token);
     setToken(token);
     navigate('/home');
@@ -58,7 +57,7 @@ function Pages() {
         <Route path="/register" element={<Register token={token} successJob={successJob} />} />
         <Route path="/login" element={<Login token={token} successJob={successJob} />} />
         <Route path="/home" element={<Home />} />
-        <Route path="/play" element={<Play />} />
+        <Route path="/join" element={<Join/>} />
       </Routes>
     </>
   );

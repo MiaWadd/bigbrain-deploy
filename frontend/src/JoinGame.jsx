@@ -1,4 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
+
 
 // A unique route must exist for this screen
 // A user is able to enter a session by either:
@@ -8,16 +11,35 @@ import { useState } from 'react';
 
 
 // After players are there, they need to enter their own name to attempt to join the session. If successful, they're taken to 2.4.2.
-// TODO -> verifiy name
+// TODO -> verifiy name?
+
 
 function JoinGame() {
   const [sessionId, setSessionId] = useState('');
   const [name, setName] = useState('');
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const sessionFromURL = params.get('sessionId');
+    if (sessionFromURL) {
+      setSessionId(sessionFromURL);
+    }
+  }, [location]);
 
 
-  const joinGame = async () => {
-    console.log("trying to join game");
-    console.log(sessionId);
+  const joinGame = async (e) => {
+    e.preventDefault();
+    try {
+      let sessionId = '123';
+      await axios.post(`http://localhost:5005/play/join/${sessionId}`, {
+        name: name,
+      });
+    } catch (err) {
+      console.log(err);
+      alert(err.response.data.error);
+    }
   }
   return (
     <>

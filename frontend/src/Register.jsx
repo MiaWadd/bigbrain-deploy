@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -9,12 +9,14 @@ function Register({ successJob, token }) {
   const [confirmPassword, setConfirmPassword] = useState('');
   const navigate = useNavigate();
 
-  if (token) {
-    console.log("Token active -> navigate to dash");
-    navigate('/home');
-  }
+  useEffect(() => {
+    if (token) {
+      navigate('/home');
+    }
+  }, [token, navigate]);
 
   const register = async () => {
+    e.preventDefault();
     // Error checking
     if (password !== confirmPassword) {
       alert("Password's do not match");
