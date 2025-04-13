@@ -8,7 +8,7 @@ function Login({ successJob, token }) {
   const navigate = useNavigate();
 
   if (token) {
-    navigate('/home');
+    navigate('/dashboard');
   }
 
   const login = async () => {

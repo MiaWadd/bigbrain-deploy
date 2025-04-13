@@ -8,7 +8,6 @@ import {
 
 import Register from './Register';
 import Login from './Login';
-import Home from './Home';
 import Dashboard from './pages/Dashboard';
 
 function Pages() {
@@ -68,7 +67,6 @@ function Pages() {
       <Routes>
         <Route path="/register" element={<Register token={token} successJob={successJob} />} />
         <Route path="/login" element={<Login token={token} successJob={successJob} />} />
-        <Route path="/home" element={<Home />} />
         <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </>
