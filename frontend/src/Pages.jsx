@@ -12,6 +12,7 @@ import Login from './Login';
 import Home from './Home';
 import Dashboard from './pages/Dashboard';
 import EditGame from './pages/EditGame';
+import EditQuestion from './pages/EditQuestion';
 
 function Pages() {
   const [token, setToken] = useState(null);
@@ -89,6 +90,7 @@ function Pages() {
         {/* Protected Routes */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/game/:gameId" element={<EditGame />} />
+        <Route path="/game/:gameId/question/:questionId" element={<EditQuestion />} />
         <Route path="/home" element={<Home />} />
       </Routes>
     </>
