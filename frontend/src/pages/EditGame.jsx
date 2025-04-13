@@ -255,3 +255,57 @@ function EditGame() {
           </div>
         </div>
       </div>
+
+      {/* Questions Section */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Questions</h2>
+          <button
+            onClick={handleAddQuestion}
+            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+          >
+            Add Question
+          </button>
+        </div>
+
+        {questions.length === 0 ? (
+          <p className="text-gray-500 text-center py-4">No questions yet. Add one to get started!</p>
+        ) : (
+          <div className="space-y-4">
+            {questions.map((question, index) => (
+              <div
+                key={question.id}
+                className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
+              >
+                <div>
+                  <h3 className="font-medium text-gray-900">
+                    Question {index + 1}: {question.text}
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Duration: {question.duration}s | Points: {question.points}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => navigate(`/game/${gameId}/question/${question.id}`)}
+                    className="px-3 py-1 text-blue-600 hover:text-blue-800"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteQuestion(question.id)}
+                    className="px-3 py-1 text-red-600 hover:text-red-800"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default EditGame;
