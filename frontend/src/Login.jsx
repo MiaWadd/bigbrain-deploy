@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
-function Login({ successJob, token }) {
+function Login({ updateToken, token }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -23,7 +23,7 @@ function Login({ successJob, token }) {
         password: password,
       });
       const token = response.data.token;
-      successJob(token);
+      updateToken(token);
     } catch (err) {
       console.log(err);
       alert(err.response.data.error);

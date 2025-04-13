@@ -31,11 +31,12 @@ function JoinGame({ joinSession }) {
   const joinGame = async (e) => {
     e.preventDefault();
     try {
-      let sessionId = '123';
-      await axios.post(`http://localhost:5005/play/join/${sessionId}`, {
+      let sessionId = '938344';
+      const response = await axios.post(`http://localhost:5005/play/join/${sessionId}`, {
         name: name,
       });
-      joinSession(sessionId);
+      console.log(response);
+      joinSession(response.data.playerId);
     } catch (err) {
       console.log(err);
       alert(err.response.data.error);

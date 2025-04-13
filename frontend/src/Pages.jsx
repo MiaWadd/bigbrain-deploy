@@ -14,7 +14,7 @@ import Play from './Play'
 
 function Pages() {
   const [token, setToken] = useState(null);
-  const [sessionId, setSessionId] = useState(null);
+  const [playerId, setPlayerId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -22,7 +22,7 @@ function Pages() {
   }, []);
 
   useEffect(() => {
-    setSessionId(localStorage.getItem('sessionId'));
+    setPlayerId(localStorage.getItem('playerId'));
   }, []);
 
   const updateToken = (token) => {
@@ -31,10 +31,10 @@ function Pages() {
     navigate('/home');
   }
 
-  const joinSession = (sessionId) => {
-    localStorage.setItem('sessionId', sessionId);
-    setToken(sessionId);
-    navigate('/play');
+  const joinSession = (playerId) => {
+    localStorage.setItem('playerId', playerId);
+    setToken(playerId);
+    // navigate('/play');
   }
 
   const logout = async () => {
@@ -70,7 +70,7 @@ function Pages() {
         <Route path="/login" element={<Login token={token} updateToken={updateToken} />} />
         <Route path="/home" element={<Home />} />
         <Route path="/join" element={<Join joinSession={joinSession}/>} />
-        <Route path="/play" element={<Play sessionId={sessionId} />} />
+        <Route path="/play" element={<Play playerId={playerId} />} />
       </Routes>
     </>
   );
