@@ -194,3 +194,96 @@ function EditQuestion() {
       setSaving(false);
     }
   };
+
+  // Handle media upload
+  const handleMediaUpload = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setQuestionData(prev => ({
+          ...prev,
+          media: {
+            type: 'image',
+            url: reader.result,
+          },
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Handle YouTube URL
+  const handleYoutubeUrl = (url) => {
+    setQuestionData(prev => ({
+      ...prev,
+      media: {
+        type: 'youtube',
+        url: url,
+      },
+    }));
+  };
+
+  useEffect(() => {
+    fetchQuestion();
+  }, [gameId, questionId]);
+
+  if (loading) {
+    return <div className="p-8 text-center">Loading question...</div>;
+  }
+
+  return (
+    <div className="p-4 sm:p-6 lg:p-8">
+      {/* Header */}
+      <div className="mb-6 flex items-center">
+        <button
+          onClick={() => navigate(`/game/${gameId}`)}
+          className="mr-4 text-gray-600 hover:text-gray-800"
+        >
+          ← Back to Game
+        </button>
+        <h1 className="text-2xl font-semibold text-gray-900">Edit Question</h1>
+      </div>
+
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600">{error}</p>
+        </div>
+      )}
+
+      <div className="space-y-6 max-w-3xl">
+        {/* Question Type */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Question Type
+          </label>
+          <select
+            value={questionData.type}
+            onChange={(e) => {
+              setQuestionData(prev => ({
+                ...prev,
+                type: e.target.value,
+                correctAnswers: [], // Reset correct answers when type changes
+              }));
+            }}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value={QUESTION_TYPES.SINGLE_CHOICE}>Single Choice</option>
+            <option value={QUESTION_TYPES.MULTIPLE_CHOICE}>Multiple Choice</option>
+            <option value={QUESTION_TYPES.JUDGEMENT}>Judgement</option>
+          </select>
+        </div>
+
+        {/* Question Text */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Question Text
+          </label>
+          <textarea
+            value={questionData.text}
+            onChange={(e) => setQuestionData(prev => ({ ...prev, text: e.target.value }))}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            rows={3}
+            placeholder="Enter your question"
+          />
+        </div>
