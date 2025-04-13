@@ -9,33 +9,46 @@ import {
 import Register from './Register';
 import Login from './Login';
 import Home from './Home';
+import Dashboard from './pages/Dashboard';
 
 function Pages() {
   const [token, setToken] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    setToken(localStorage.getItem('token'));
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
+      setToken(storedToken);
+    }
   }, []);
 
   const successJob = (token) => {
     localStorage.setItem('token', token);
     setToken(token);
-    navigate('/home');
+    navigate('/dashboard');
   }
 
   const logout = async () => {
+    const currentToken = localStorage.getItem('token');
+    if (!currentToken) {
+        console.error("No token found for logout");
+        localStorage.removeItem('token');
+        setToken(null);
+        navigate('/login');
+        return;
+    }
     try {
       await axios.post('http://localhost:5005/admin/auth/logout', {}, {
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `Bearer ${currentToken}`,
         }
       });
+    } catch (err) {
+      console.error("Logout API call failed:", err.response?.data?.error || err.message);
+    } finally {
       localStorage.removeItem('token');
       setToken(null);
       navigate('/login');
-    } catch (err) {
-      alert(err.response.data.error);
     }
   };
 
@@ -56,6 +69,7 @@ function Pages() {
         <Route path="/register" element={<Register token={token} successJob={successJob} />} />
         <Route path="/login" element={<Login token={token} successJob={successJob} />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/dashboard" element={<Dashboard />} />
       </Routes>
     </>
   );
