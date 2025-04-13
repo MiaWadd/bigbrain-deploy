@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import CreateGameModal from '../components/CreateGameModal';
+import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 
 // Define the backend URL
 const BACKEND_PORT = 5005;
@@ -12,6 +13,7 @@ function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [deleteGame, setDeleteGame] = useState(null); // Store game to be deleted
   const navigate = useNavigate();
 
   // Function to fetch games
@@ -59,7 +61,7 @@ function Dashboard() {
     }
   };
 
-  // Function to generate a random ID (you might want to use a more robust method)
+  // Function to generate a random ID
   const generateGameId = () => {
     return Math.floor(Math.random() * 1000000) + 1;
   };
@@ -73,8 +75,6 @@ function Dashboard() {
     }
 
     try {
-      // Get the owner email from existing games
-      // If no games exist yet, we'll need to get it from somewhere else (maybe stored during login?)
       const ownerEmail = games.length > 0 ? games[0].owner : null;
       
       if (!ownerEmail) {
@@ -82,21 +82,18 @@ function Dashboard() {
         return;
       }
 
-      // Create new game object
       const newGame = {
         id: generateGameId(),
         name: gameName,
-        questions: [], // Initialize with empty questions array
-        thumbnail: "", // Initialize with empty thumbnail
-        owner: ownerEmail, // Use the owner email from existing games
-        active: false, // Add any other required fields
-        createdAt: new Date().toISOString(), // Add timestamp
+        questions: [],
+        thumbnail: "",
+        owner: ownerEmail,
+        active: false,
+        createdAt: new Date().toISOString(),
       };
 
-      // Create updated games array with the new game
       const updatedGames = [...games, newGame];
 
-      // Send the entire updated games array to the backend
       await axios.put(
         `${API_URL}/admin/games`,
         { games: updatedGames },
@@ -108,10 +105,7 @@ function Dashboard() {
         }
       );
 
-      // Update local state
       setGames(updatedGames);
-      
-      // Close the modal
       setIsCreateModalOpen(false);
     } catch (err) {
       console.error("Error creating game:", err);
@@ -130,7 +124,55 @@ function Dashboard() {
     }
   };
 
-  // Fetch games on component mount
+  // Function to handle game deletion
+  const handleDeleteGame = async () => {
+    if (!deleteGame) return;
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError('Authentication token not found. Please log in.');
+      return;
+    }
+
+    try {
+      // Filter out the game to be deleted
+      const updatedGames = games.filter(game => (game.id || game.gameId) !== (deleteGame.id || deleteGame.gameId));
+
+      // Update the backend
+      await axios.put(
+        `${API_URL}/admin/games`,
+        { games: updatedGames },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      // Update local state
+      setGames(updatedGames);
+      setError(null); // Clear any existing errors
+      
+      // Close the delete modal
+      setDeleteGame(null);
+    } catch (err) {
+      console.error("Error deleting game:", err);
+      let errorMessage = 'Failed to delete game.';
+      if (err.response) {
+        errorMessage = `Error: ${err.response.status} - ${err.response.data?.error || 'Server error'}`;
+        if (err.response.status === 400 && err.response.data?.error?.includes('owned by other admins')) {
+          errorMessage = 'Cannot delete games owned by other admins.';
+        }
+      } else if (err.request) {
+        errorMessage = 'Failed to delete game: No response from server.';
+      } else {
+        errorMessage = `Failed to delete game: ${err.message}`;
+      }
+      setError(errorMessage);
+    }
+  };
+
   useEffect(() => {
     fetchGames();
   }, []);
@@ -200,7 +242,7 @@ function Dashboard() {
                     Edit
                   </Link>
                   <button
-                    onClick={() => alert(`Delete game ${game.name} clicked - Placeholder`)}
+                    onClick={() => setDeleteGame(game)}
                     className="text-sm font-medium text-red-600 hover:text-red-800"
                   >
                     Delete
@@ -216,6 +258,13 @@ function Dashboard() {
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
         onCreateGame={handleCreateGame}
+      />
+
+      <DeleteConfirmationModal
+        isOpen={deleteGame !== null}
+        onClose={() => setDeleteGame(null)}
+        onConfirm={handleDeleteGame}
+        gameName={deleteGame?.name || ''}
       />
     </div>
   );
