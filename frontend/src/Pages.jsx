@@ -3,12 +3,15 @@ import axios from 'axios';
 import {
   Routes,
   Route,
+  Link,
   useNavigate,
 } from "react-router-dom";
 
 import Register from './Register';
 import Login from './Login';
+import Home from './Home';
 import Dashboard from './pages/Dashboard';
+import EditGame from './pages/EditGame';
 
 function Pages() {
   const [token, setToken] = useState(null);
@@ -30,11 +33,11 @@ function Pages() {
   const logout = async () => {
     const currentToken = localStorage.getItem('token');
     if (!currentToken) {
-        console.error("No token found for logout");
-        localStorage.removeItem('token');
-        setToken(null);
-        navigate('/login');
-        return;
+      console.error("No token found for logout");
+      localStorage.removeItem('token');
+      setToken(null);
+      navigate('/login');
+      return;
     }
     try {
       await axios.post('http://localhost:5005/admin/auth/logout', {}, {
@@ -53,21 +56,40 @@ function Pages() {
 
   return (
     <>
-      <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
-        <h1 className="text-4xl font-bold">BigBrain</h1>
-        {token && (
-          <>
-            <button onClick={logout} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+      <nav className="p-4 bg-gray-100 mb-4 flex justify-between items-center">
+        <div>
+          {token && (
+            <Link to="/dashboard" className="text-blue-600 hover:underline">
+              Dashboard
+            </Link>
+          )}
+        </div>
+        <div>
+          {token ? (
+            <button
+              onClick={logout}
+              className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+            >
               Logout
-            </button>        
-          </>
-        )}
+            </button>
+          ) : (
+            <>
+              <Link to="/register" className="mr-4 text-blue-600 hover:underline">Register</Link>
+              <Link to="/login" className="text-blue-600 hover:underline">Login</Link>
+            </>
+          )}
+        </div>
       </nav>
-      <hr />
+
       <Routes>
+        {/* Public Routes */}
         <Route path="/register" element={<Register token={token} successJob={successJob} />} />
         <Route path="/login" element={<Login token={token} successJob={successJob} />} />
+
+        {/* Protected Routes */}
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/game/:gameId" element={<EditGame />} />
+        <Route path="/home" element={<Home />} />
       </Routes>
     </>
   );
