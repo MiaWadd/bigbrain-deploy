@@ -287,3 +287,193 @@ function EditQuestion() {
             placeholder="Enter your question"
           />
         </div>
+
+        {/* Time Limit and Points */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Time Limit (seconds)
+            </label>
+            <input
+              type="number"
+              value={questionData.timeLimit}
+              onChange={(e) => setQuestionData(prev => ({ ...prev, timeLimit: parseInt(e.target.value) || 0 }))}
+              min="1"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Points
+            </label>
+            <input
+              type="number"
+              value={questionData.points}
+              onChange={(e) => setQuestionData(prev => ({ ...prev, points: parseInt(e.target.value) || 0 }))}
+              min="1"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+        </div>
+
+        {/* Media Section */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Media (Optional)
+          </label>
+          <div className="space-y-4">
+            {/* YouTube URL */}
+            <div>
+              <input
+                type="url"
+                placeholder="YouTube URL"
+                value={questionData.media.type === 'youtube' ? questionData.media.url : ''}
+                onChange={(e) => handleYoutubeUrl(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            
+            {/* Image Upload */}
+            <div>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleMediaUpload}
+                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+              />
+            </div>
+
+            {/* Preview */}
+            {questionData.media.url && (
+              <div className="mt-2">
+                {questionData.media.type === 'image' ? (
+                  <img
+                    src={questionData.media.url}
+                    alt="Question media"
+                    className="max-h-40 object-contain"
+                  />
+                ) : (
+                  <div className="text-sm text-gray-500">YouTube video URL added</div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Answers */}
+        <div>
+          <div className="flex justify-between items-center mb-2">
+            <label className="block text-sm font-medium text-gray-700">
+              {questionData.type === QUESTION_TYPES.JUDGEMENT ? 'Statement' : 'Answers'}
+            </label>
+            {questionData.type !== QUESTION_TYPES.JUDGEMENT && questionData.answers.length < 6 && (
+              <button
+                onClick={() => setQuestionData(prev => ({
+                  ...prev,
+                  answers: [...prev.answers, ''],
+                }))}
+                className="text-sm text-blue-600 hover:text-blue-800"
+              >
+                + Add Answer
+              </button>
+            )}
+          </div>
+          <div className="space-y-2">
+            {questionData.type === QUESTION_TYPES.JUDGEMENT ? (
+              // Judgement question - single statement with true/false
+              <div className="flex items-center gap-4">
+                <input
+                  type="text"
+                  value={questionData.answers[0] || ''}
+                  onChange={(e) => {
+                    setQuestionData(prev => ({
+                      ...prev,
+                      answers: [e.target.value],
+                      correctAnswers: prev.correctAnswers, // Maintain current true/false state
+                    }));
+                  }}
+                  placeholder="Enter the statement to judge as true or false"
+                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <div className="flex items-center gap-2">
+                  <label className="text-sm font-medium text-gray-700">False</label>
+                  <div 
+                    className={`w-14 h-7 flex items-center rounded-full p-1 cursor-pointer ${
+                      questionData.correctAnswers.includes(0) ? 'bg-blue-600' : 'bg-gray-300'
+                    }`}
+                    onClick={() => {
+                      setQuestionData(prev => ({
+                        ...prev,
+                        correctAnswers: prev.correctAnswers.includes(0) ? [] : [0],
+                      }));
+                    }}
+                  >
+                    <div
+                      className={`bg-white w-5 h-5 rounded-full shadow-md transform transition-transform ${
+                        questionData.correctAnswers.includes(0) ? 'translate-x-7' : ''
+                      }`}
+                    />
+                  </div>
+                  <label className="text-sm font-medium text-gray-700">True</label>
+                </div>
+              </div>
+            ) : (
+              // Multiple choice or single choice questions
+              questionData.answers.map((answer, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <input
+                    type={questionData.type === QUESTION_TYPES.MULTIPLE_CHOICE ? 'checkbox' : 'radio'}
+                    checked={questionData.correctAnswers.includes(index)}
+                    onChange={(e) => {
+                      let newCorrectAnswers;
+                      if (questionData.type === QUESTION_TYPES.MULTIPLE_CHOICE) {
+                        newCorrectAnswers = e.target.checked
+                          ? [...questionData.correctAnswers, index]
+                          : questionData.correctAnswers.filter(i => i !== index);
+                      } else {
+                        newCorrectAnswers = e.target.checked ? [index] : [];
+                      }
+                      setQuestionData(prev => ({
+                        ...prev,
+                        correctAnswers: newCorrectAnswers,
+                      }));
+                    }}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  />
+                  <input
+                    type="text"
+                    value={answer}
+                    onChange={(e) => {
+                      const newAnswers = [...questionData.answers];
+                      newAnswers[index] = e.target.value;
+                      setQuestionData(prev => ({
+                        ...prev,
+                        answers: newAnswers,
+                      }));
+                    }}
+                    placeholder={`Answer ${index + 1}`}
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  {questionData.answers.length > 2 && (
+                    <button
+                      onClick={() => {
+                        const newAnswers = questionData.answers.filter((_, i) => i !== index);
+                        const newCorrectAnswers = questionData.correctAnswers
+                          .filter(i => i !== index)
+                          .map(i => i > index ? i - 1 : i);
+                        setQuestionData(prev => ({
+                          ...prev,
+                          answers: newAnswers,
+                          correctAnswers: newCorrectAnswers,
+                        }));
+                      }}
+                      className="text-red-600 hover:text-red-800 px-2"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              ))
+            )}
+          </div>
+        </div>
