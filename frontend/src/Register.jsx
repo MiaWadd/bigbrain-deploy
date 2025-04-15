@@ -11,7 +11,7 @@ function Register({ successJob, token }) {
 
   if (token) {
     console.log("Token active -> navigate to dash");
-    navigate('/home');
+    navigate('/dashboard');
   }
 
   const register = async () => {
