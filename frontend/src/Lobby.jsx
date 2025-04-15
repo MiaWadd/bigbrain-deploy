@@ -26,15 +26,15 @@ export default function Lobby() {
         Lobby
       </h1>
       <div className="flex flex-col items-center justify-center">
-      	<div className="flex space-x-8 mb-10 justify-center">
-					<div className="bubble bubble-red"></div>
-					<div className="bubble bubble-yellow"></div>
-					<div className="bubble bubble-green"></div>
-				</div>
-      	<p className="text-xl font-medium text-center px-6 transition-opacity duration-500 ease-in-out">
-        	{quotes[quoteIndex]}
-      	</p>
-    	</div>
+        <div className="flex space-x-8 mb-10 justify-center">
+          <div className="bubble bubble-red"></div>
+          <div className="bubble bubble-yellow"></div>
+          <div className="bubble bubble-green"></div>
+        </div>
+        <p className="text-xl font-medium text-center px-6 transition-opacity duration-500 ease-in-out">
+          {quotes[quoteIndex]}
+        </p>
+      </div>
     </>
   );
 }

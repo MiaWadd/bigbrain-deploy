@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
-function Register({ successJob, token }) {
+function Register({ updateToken, token }) {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
@@ -15,7 +15,7 @@ function Register({ successJob, token }) {
     }
   }, [token, navigate]);
 
-  const register = async () => {
+  const register = async (e) => {
     e.preventDefault();
     // Error checking
     if (password !== confirmPassword) {
@@ -30,7 +30,7 @@ function Register({ successJob, token }) {
         name: name
       });
       const token = response.data.token;
-      successJob(token);
+      updateToken(token);
     } catch (err) {
       console.log("failed to register user");
       console.log(err);

@@ -60,7 +60,7 @@ function Login({ updateToken, token }) {
           <p className="mt-5 text-center text-md font-normal text-black dark:text-white">
             Don&rsquo;t have an account?{' '}
             <Link to="/register" className="text-blue-500 hover:underline hover:text-blue-700">Register</Link>
-          </p>              
+          </p>
         </div>
       </div>
     </>
