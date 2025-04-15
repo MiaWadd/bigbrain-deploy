@@ -45,7 +45,7 @@ function Play({ playerId }) {
 	const [selectedAnswers, setSelectedAnswers] = useState([]);
 	const [correctAnswers, setCorrectAnswers] = useState([]);
 
-  playerId = 130896241;
+  playerId = 218490959;
   useEffect(() => {
     // if (!localStorage.getItem('playerId')) {
 			if (!playerId) {
@@ -80,6 +80,7 @@ function Play({ playerId }) {
 				} catch (err) {
 					if (err.response.data.error === "Session has not started yet") {
 							setGameHasStarted(false);
+							navigate('/lobby');
 					}
 					console.log(err);
 					// alert(err.response.data.error);

@@ -11,6 +11,7 @@ import Login from './Login';
 import Home from './Home';
 import Join from './JoinGame';
 import Play from './Play'
+import Lobby from './Lobby';
 
 function Pages() {
   const [token, setToken] = useState(null);
@@ -71,6 +72,8 @@ function Pages() {
         <Route path="/home" element={<Home />} />
         <Route path="/join" element={<Join joinSession={joinSession}/>} />
         <Route path="/play" element={<Play playerId={playerId} />} />
+        <Route path="/lobby" element={<Lobby />} />
+
       </Routes>
     </>
   );
