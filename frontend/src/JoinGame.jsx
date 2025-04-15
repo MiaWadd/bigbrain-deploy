@@ -19,6 +19,9 @@ function JoinGame({ joinSession }) {
   const [name, setName] = useState('');
   const location = useLocation();
 
+  const [error, setError] = useState(null);
+
+  // If URL already has sessionId, populate it
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const sessionFromURL = params.get('sessionId');
@@ -27,23 +30,32 @@ function JoinGame({ joinSession }) {
     }
   }, [location]);
 
-
   const joinGame = async (e) => {
     e.preventDefault();
     try {
-      let sessionId = '938344';
+      let sessionId = '938344'; //TODO Update
       const response = await axios.post(`http://localhost:5005/play/join/${sessionId}`, {
         name: name,
       });
-      console.log(response);
       joinSession(response.data.playerId);
     } catch (err) {
-      console.log(err);
-      alert(err.response.data.error);
+      if (err.response.data.error === "Session ID is not an active session") {
+        setError('Session ID is not vaild');
+      } else {
+        setError(err.response.data.error);
+      }
     }
   }
   return (
     <>
+      <div className="p-4 sm:p-6 lg:p-8">
+        {error && (
+          <div className=" mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-600">{error}</p>
+          </div>
+        )}
+      </div>
+
       <div className="mt-10 mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg outline outline-black/5 dark:bg-slate-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
         <div className='w-full'>
           <h1 className="text-3xl text-center font-large text-black dark:text-white">Join a Game</h1>   
