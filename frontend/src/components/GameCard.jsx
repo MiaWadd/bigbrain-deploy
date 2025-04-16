@@ -46,4 +46,55 @@ function GameCard({ game, onDelete }) {
     }
   };
 
-  
+  // Start a new game session
+  const startGame = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.post(
+        `${API_URL}/admin/game/${game.id}/mutate`,
+        { mutationType: 'START' },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+      
+      // After starting the game, we need to get the active session ID
+      const activeSessionResponse = await axios.get(
+        `${API_URL}/admin/games`,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          }
+        }
+      );
+
+      // Find the current game in the response and get its active session
+      const currentGame = activeSessionResponse.data.games.find(g => g.id === game.id);
+      const newSessionId = currentGame?.active;
+                          
+      if (newSessionId) {
+        setSessionId(newSessionId);
+        setIsActive(true);
+        setShowSessionPopup(true);
+      } else {
+        throw new Error('No session ID received from server');
+      }
+    } catch (err) {
+      console.error('Start game error:', err);
+      setError(err.response?.data?.error || err.message || 'Failed to start game session');
+      setIsActive(false);
+      setSessionId(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Check session status on mount and when sessionId changes
+  useEffect(() => {
+    checkSessionStatus();
+  }, [game.active, sessionId]);
