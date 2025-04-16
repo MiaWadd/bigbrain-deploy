@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import CreateGameModal from '../components/CreateGameModal';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
+import GameCard from '../components/GameCard';
 
 // Define the backend URL
 const BACKEND_PORT = 5005;
@@ -212,44 +213,16 @@ function Dashboard() {
         </button>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {games.length === 0 ? (
           <p className="text-gray-500 col-span-full text-center py-10">No games found. Create one!</p>
         ) : (
           games.map((game) => (
-            <div key={game.id || game.gameId} className="bg-white shadow rounded-lg overflow-hidden flex flex-col">
-              <div className="h-40 bg-gray-200 flex items-center justify-center overflow-hidden">
-                {game.thumbnail ? (
-                  <img
-                    src={game.thumbnail}
-                    alt={`${game.name} thumbnail`}
-                    className="object-cover h-full w-full"
-                    onError={(e) => { e.target.onerror = null; e.target.src=""; e.target.alt="Invalid thumbnail"; }}
-                  />
-                ) : (
-                  <span className="text-gray-400 text-sm">No Thumbnail</span>
-                )}
-              </div>
-              <div className="p-4 flex flex-col flex-grow">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2 truncate" title={game.name}>{game.name}</h3>
-                <p className="text-sm text-gray-600 mb-1">Questions: {Array.isArray(game.questions) ? game.questions.length : 0}</p>
-                <p className="text-sm text-gray-600 mb-4">Duration: {calculateTotalDuration(game.questions)}s</p>
-                <div className="mt-auto flex justify-between items-center pt-2 border-t border-gray-200">
-                  <Link
-                    to={`/game/${game.id || game.gameId}`}
-                    className="text-sm font-medium text-blue-600 hover:text-blue-800"
-                  >
-                    Edit
-                  </Link>
-                  <button
-                    onClick={() => setDeleteGame(game)}
-                    className="text-sm font-medium text-red-600 hover:text-red-800"
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </div>
+            <GameCard
+              key={game.id || game.gameId}
+              game={game}
+              onDelete={() => setDeleteGame(game)}
+            />
           ))
         )}
       </div>
