@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const quotes = [
   "Waiting for players...",
@@ -10,8 +12,17 @@ const quotes = [
   "Please give us good marks...",
 ];
 
-export default function Lobby() {
+export default function Lobby({ playerId }) {
+  const navigate = useNavigate();
   const [quoteIndex, setQuoteIndex] = useState(0);
+
+  playerId = 374173910; //TODO update
+  // If no playerId, redirect to join game
+  useEffect(() => {
+    if (!playerId) {
+      navigate('/join');
+    }
+  }, [navigate]); 
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -19,6 +30,24 @@ export default function Lobby() {
     }, 3000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    const poll = setInterval(async () => {
+      try {
+        const response = await axios.get(`http://localhost:5005/play/${playerId}/question`);
+        // if (response.data.message === " ") {
+        //   clearInterval(poll);
+        //   navigate('/play');
+        // }
+        console.log(response);
+      } catch (error) {
+        if (error.response.data.error !== "Session has not started yet") {
+          console.error(error.response.data.error);
+        }
+      }
+    }, 3000);
+    return () => clearInterval(poll);
+  }, [playerId]);
 
   return (
     <>      
