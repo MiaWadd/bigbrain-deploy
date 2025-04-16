@@ -137,3 +137,46 @@ function GameCard({ game, onDelete }) {
             </p>
           )}
         </div>
+
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => navigate(`/game/${game.id}`)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            Edit
+          </button>
+          
+          <button
+            onClick={startGame}
+            disabled={loading || isActive}
+            className={`px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 ${
+              isActive
+                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                : loading
+                ? 'bg-green-400 text-white cursor-wait'
+                : 'bg-green-600 text-white hover:bg-green-700'
+            }`}
+          >
+            {loading ? 'Starting...' : isActive ? 'Session Active' : 'Start Game'}
+          </button>
+
+          <button
+            onClick={() => onDelete(game.id)}
+            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+          >
+            Delete
+          </button>
+        </div>
+
+        {showSessionPopup && (
+          <SessionPopup
+            sessionId={sessionId}
+            onClose={() => setShowSessionPopup(false)}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
+
+export default GameCard; 
