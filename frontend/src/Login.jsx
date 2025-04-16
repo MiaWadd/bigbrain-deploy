@@ -9,7 +9,7 @@ function Login({ updateToken, token }) {
 
   useEffect(() => {
     if (token) {
-      navigate('/home');
+      navigate('/dashboard');
     }
   }, [token, navigate]);
 

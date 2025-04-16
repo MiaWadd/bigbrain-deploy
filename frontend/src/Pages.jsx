@@ -3,12 +3,16 @@ import axios from 'axios';
 import {
   Routes,
   Route,
+  Link,
   useNavigate,
 } from "react-router-dom";
 
 import Register from './Register';
 import Login from './Login';
 import Home from './Home';
+import Dashboard from './pages/Dashboard';
+import EditGame from './pages/EditGame';
+import EditQuestion from './pages/EditQuestion';
 import Join from './JoinGame';
 import Play from './Play'
 import Lobby from './Lobby';
@@ -19,7 +23,10 @@ function Pages() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setToken(localStorage.getItem('token'));
+    const storedToken = localStorage.getItem('token');
+    if (storedToken) {
+      setToken(storedToken);
+    }
   }, []);
 
   useEffect(() => {
@@ -29,7 +36,7 @@ function Pages() {
   const updateToken = (token) => {
     localStorage.setItem('token', token);
     setToken(token);
-    navigate('/home');
+    navigate('/dashboard');
   }
 
   const joinSession = (playerId) => {
@@ -39,36 +46,59 @@ function Pages() {
   }
 
   const logout = async () => {
-    try {
-      await axios.post('http://localhost:5005/admin/auth/logout', {}, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        }
-      });
+    const currentToken = localStorage.getItem('token');
+    if (!currentToken) {
+      console.error("No token found for logout");
       localStorage.removeItem('token');
       setToken(null);
       navigate('/login');
+      return;
+    }
+    try {
+      await axios.post('http://localhost:5005/admin/auth/logout', {}, {
+        headers: {
+          'Authorization': `Bearer ${currentToken}`,
+        }
+      });
     } catch (err) {
-      alert(err.response.data.error);
+      console.error("Logout API call failed:", err.response?.data?.error || err.message);
+    } finally {
+      localStorage.removeItem('token');
+      setToken(null);
+      navigate('/login');
     }
   };
 
   return (
     <>
-      <nav className="bg-white shadow-md px-6 py-4 flex justify-between items-center">
-        <h1 className="text-4xl font-bold">BigBrain</h1>
-        {token && (
-          <>
-            <button onClick={logout} className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md">
+      <nav className="p-4 bg-gray-100 mb-4 flex justify-between items-center">
+        <div>
+          {token && (
+            <Link to="/dashboard" className="text-blue-600 hover:underline">
+              Dashboard
+            </Link>
+          )}
+        </div>
+        <div>
+          {token ? (
+            <button
+              onClick={logout}
+              className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+            >
               Logout
-            </button>        
-          </>
-        )}
+            </button>
+          ) : (
+            <>
+              <Link to="/register" className="mr-4 text-blue-600 hover:underline">Register</Link>
+              <Link to="/login" className="text-blue-600 hover:underline">Login</Link>
+            </>
+          )}
+        </div>
       </nav>
-      <hr />
+
       <Routes>
-        <Route path="/register" element={<Register token={token} updateToken={updateToken} />} />
-        <Route path="/login" element={<Login token={token} updateToken={updateToken} />} />
+        <Route path="/register" element={<Register token={token} successJob={successJob} />} />
+        <Route path="/login" element={<Login token={token} successJob={successJob} />} />
         <Route path="/home" element={<Home />} />
         <Route path="/join" element={<Join joinSession={joinSession}/>} />
         <Route path="/play" element={<Play playerId={playerId} />} />

@@ -11,7 +11,7 @@ function Register({ updateToken, token }) {
 
   useEffect(() => {
     if (token) {
-      navigate('/home');
+      navigate('/dashboard');
     }
   }, [token, navigate]);
 
