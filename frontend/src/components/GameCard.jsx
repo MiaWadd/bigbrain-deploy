@@ -98,3 +98,42 @@ function GameCard({ game, onDelete }) {
   useEffect(() => {
     checkSessionStatus();
   }, [game.active, sessionId]);
+
+  return (
+    <div className="bg-white rounded-lg shadow-md overflow-hidden">
+      {/* Thumbnail */}
+      <div className="h-48 bg-gray-200 flex items-center justify-center overflow-hidden">
+        {game.thumbnail ? (
+          <img
+            src={game.thumbnail}
+            alt={`${game.name} thumbnail`}
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "";
+              e.target.alt = "Invalid thumbnail";
+            }}
+          />
+        ) : (
+          <span className="text-gray-400 text-sm">No Thumbnail</span>
+        )}
+      </div>
+
+      <div className="p-6">
+        {error && (
+          <div className="mb-4 p-2 bg-red-50 border border-red-200 rounded text-red-600 text-sm">
+            {error}
+          </div>
+        )}
+        
+        <h3 className="text-xl font-semibold mb-2">{game.name}</h3>
+        
+        <div className="mb-4 space-y-1">
+          <p className="text-gray-600">Questions: {game.questions?.length || 0}</p>
+          <p className="text-gray-600">Duration: {calculateTotalDuration(game.questions)}s</p>
+          {isActive && (
+            <p className="text-green-600 font-medium">
+              Session Active • ID: {sessionId}
+            </p>
+          )}
+        </div>
