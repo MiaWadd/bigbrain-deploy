@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import SessionPopup from './SessionPopup';
+import StopGamePopup from './StopGamePopup';
 
 const BACKEND_PORT = 5005;
 const API_URL = `http://localhost:${BACKEND_PORT}`;
@@ -9,6 +10,7 @@ const API_URL = `http://localhost:${BACKEND_PORT}`;
 function GameCard({ game, onDelete }) {
   const navigate = useNavigate();
   const [showSessionPopup, setShowSessionPopup] = useState(false);
+  const [showStopPopup, setShowStopPopup] = useState(false);
   const [sessionId, setSessionId] = useState(game.active || null);
   const [isActive, setIsActive] = useState(!!game.active);
   const [loading, setLoading] = useState(false);
@@ -94,6 +96,40 @@ function GameCard({ game, onDelete }) {
     }
   };
 
+  // Stop the game session
+  const stopGame = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(
+        `${API_URL}/admin/game/${game.id}/mutate`,
+        { mutationType: 'END' },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          }
+        }
+      );
+      
+      setIsActive(false);
+      setSessionId(null);
+      setShowStopPopup(true);
+    } catch (err) {
+      console.error('Stop game error:', err);
+      setError(err.response?.data?.error || err.message || 'Failed to stop game session');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Handle viewing results
+  const handleViewResults = () => {
+    setShowStopPopup(false);
+    navigate(`/results/${game.id}`); // This route will be implemented later
+  };
+
   // Check session status on mount and when sessionId changes
   useEffect(() => {
     checkSessionStatus();
@@ -146,19 +182,31 @@ function GameCard({ game, onDelete }) {
             Edit
           </button>
           
-          <button
-            onClick={startGame}
-            disabled={loading || isActive}
-            className={`px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 ${
-              isActive
-                ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : loading
-                ? 'bg-green-400 text-white cursor-wait'
-                : 'bg-green-600 text-white hover:bg-green-700'
-            }`}
-          >
-            {loading ? 'Starting...' : isActive ? 'Session Active' : 'Start Game'}
-          </button>
+          {isActive ? (
+            <button
+              onClick={stopGame}
+              disabled={loading}
+              className={`px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${
+                loading
+                  ? 'bg-red-400 text-white cursor-wait'
+                  : 'bg-red-600 text-white hover:bg-red-700'
+              }`}
+            >
+              {loading ? 'Stopping...' : 'Stop Game'}
+            </button>
+          ) : (
+            <button
+              onClick={startGame}
+              disabled={loading}
+              className={`px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 ${
+                loading
+                  ? 'bg-green-400 text-white cursor-wait'
+                  : 'bg-green-600 text-white hover:bg-green-700'
+              }`}
+            >
+              {loading ? 'Starting...' : 'Start Game'}
+            </button>
+          )}
 
           <button
             onClick={() => onDelete(game.id)}
@@ -172,6 +220,13 @@ function GameCard({ game, onDelete }) {
           <SessionPopup
             sessionId={sessionId}
             onClose={() => setShowSessionPopup(false)}
+          />
+        )}
+
+        {showStopPopup && (
+          <StopGamePopup
+            onClose={() => setShowStopPopup(false)}
+            onViewResults={handleViewResults}
           />
         )}
       </div>
