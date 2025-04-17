@@ -1,29 +1,24 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
-function Login({ updateToken, token }) {
+function Login({ successJob, token }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (token) {
-      navigate('/dashboard');
-    }
-  }, [token, navigate]);
+  if (token) {
+    navigate('/dashboard');
+  }
 
-
-
-  const login = async (e) => {
-    e.preventDefault();
+  const login = async () => {
     try {
       const response = await axios.post(`http://localhost:5005/admin/auth/login`, {
         email: email,
         password: password,
       });
       const token = response.data.token;
-      updateToken(token);
+      successJob(token);
     } catch (err) {
       console.log(err);
       alert(err.response.data.error);
@@ -60,7 +55,7 @@ function Login({ updateToken, token }) {
           <p className="mt-5 text-center text-md font-normal text-black dark:text-white">
             Don&rsquo;t have an account?{' '}
             <Link to="/register" className="text-blue-500 hover:underline hover:text-blue-700">Register</Link>
-          </p>
+          </p>              
         </div>
       </div>
     </>
