@@ -23,10 +23,11 @@ function Pages() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
+    // const storedToken = localStorage.getItem('token');
     // if (storedToken) {
     //   setToken(storedToken);
     // }
+    setToken(localStorage.getItem('token'));
   }, []);
 
   useEffect(() => {
