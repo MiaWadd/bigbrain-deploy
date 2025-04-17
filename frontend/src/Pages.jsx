@@ -13,22 +13,36 @@ import Home from './Home';
 import Dashboard from './pages/Dashboard';
 import EditGame from './pages/EditGame';
 import EditQuestion from './pages/EditQuestion';
+import Play from './Play'
+import Lobby from './Lobby';
+
 
 function Pages() {
   const [token, setToken] = useState(null);
+  const [playerId, setPlayerId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
-    if (storedToken) {
-      setToken(storedToken);
-    }
+    // if (storedToken) {
+    //   setToken(storedToken);
+    // }
   }, []);
 
-  const successJob = (token) => {
+  useEffect(() => {
+    setPlayerId(localStorage.getItem('playerId'));
+  }, []);
+
+  const updateToken = (token) => {
     localStorage.setItem('token', token);
     setToken(token);
     navigate('/dashboard');
+  }
+
+  const joinSession = (playerId) => {
+    localStorage.setItem('playerId', playerId);
+    setToken(playerId);
+    // navigate('/play');
   }
 
   const logout = async () => {
@@ -58,6 +72,7 @@ function Pages() {
   return (
     <>
       <nav className="p-4 bg-gray-100 mb-4 flex justify-between items-center">
+      <h1 className="text-4xl font-bold">BigBrain</h1>
         <div>
           {token && (
             <Link to="/dashboard" className="text-blue-600 hover:underline">
@@ -84,14 +99,16 @@ function Pages() {
 
       <Routes>
         {/* Public Routes */}
-        <Route path="/register" element={<Register token={token} successJob={successJob} />} />
-        <Route path="/login" element={<Login token={token} successJob={successJob} />} />
+        <Route path="/register" element={<Register token={token} updateToken={updateToken} />} />
+        <Route path="/login" element={<Login token={token} updateToken={updateToken} />} />
+        <Route path="/play" element={<Play playerId={playerId} />} />
 
         {/* Protected Routes */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/game/:gameId" element={<EditGame />} />
         <Route path="/game/:gameId/question/:questionId" element={<EditQuestion />} />
         <Route path="/home" element={<Home />} />
+        <Route path="/lobby" element={<Lobby playerId={playerId} />} />
       </Routes>
     </>
   );
