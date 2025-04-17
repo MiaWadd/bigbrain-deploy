@@ -7,6 +7,7 @@ function Register({ updateToken, token }) {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,27 +21,30 @@ function Register({ updateToken, token }) {
     e.preventDefault();
     // Error checking
     if (password !== confirmPassword) {
-      alert("Password's do not match");
-      return;
+      setError("Passwords do not match");
+    } else {
+      try {
+        const response = await axios.post(`http://localhost:5005/admin/auth/register`, {
+          email: email,
+          password: password,
+          name: name
+        });
+        const token = response.data.token;
+        updateToken(token);
+      } catch (err) {
+        setError(err.response.data.error);
+      }
     }
-    try {
-      console.log("registering user");
-      const response = await axios.post(`http://localhost:5005/admin/auth/register`, {
-        email: email,
-        password: password,
-        name: name
-      });
-      const token = response.data.token;
-      updateToken(token);
-    } catch (err) {
-      console.log("failed to register user");
-      console.log(err);
-      alert(err.response.data.error);
-    }
+
   }
   return (
-    <>
-      <div className="mt-10 mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg outline outline-black/5 dark:bg-slate-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+    <div className="p-4 sm:p-6 lg:p-8">
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600">{error}</p>
+        </div>
+      )}
+      <div className="mt-2 mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg outline outline-black/5 dark:bg-slate-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
         <div className='w-full'>
           <h1 className="text-3xl text-center font-large text-black dark:text-white">Register</h1>  
           <form onSubmit={register}>
@@ -92,7 +96,7 @@ function Register({ updateToken, token }) {
           </p>               
         </div>
       </div>
-    </>
+    </div>
   )
 }
 

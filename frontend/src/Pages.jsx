@@ -7,14 +7,13 @@ import {
   useNavigate,
 } from "react-router-dom";
 
-import Register from './Register';
-import Login from './Login';
-import Home from './Home';
+import Register from './pages/Register';
+import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import EditGame from './pages/EditGame';
 import EditQuestion from './pages/EditQuestion';
-import Play from './Play'
-import Lobby from './Lobby';
+import Play from './pages/Play'
+import Lobby from './pages/Lobby';
 
 
 function Pages() {
@@ -108,7 +107,6 @@ function Pages() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/game/:gameId" element={<EditGame />} />
         <Route path="/game/:gameId/question/:questionId" element={<EditQuestion />} />
-        <Route path="/home" element={<Home />} />
         <Route path="/lobby" element={<Lobby playerId={playerId} />} />
       </Routes>
     </>
