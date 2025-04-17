@@ -1,1 +1,45 @@
 @import "tailwindcss";
+
+
+  @keyframes bounce-custom  {
+    0% {
+      transform: translateY(0);
+      animation-timing-function: ease-in-out;
+    }
+    25% {
+      transform: translateY(-50px);
+      animation-timing-function: ease-in-out;
+    }
+    50% {
+      transform: translateY(0);
+      animation-timing-function: ease-in-out;
+    }
+    100% {
+      transform: translateY(0); 
+      animation-timing-function: ease-in-out;
+    }
+  }
+  
+  
+  .bubble {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 9999px;
+    animation: bounce-custom 1s infinite;
+  }
+  
+  .bubble-red {
+    background-color: #f72525;
+    animation-delay: 0s;
+  }
+  
+  .bubble-yellow {
+    background-color: #f7c80a;
+    animation-delay: 0.2s;
+  }
+  
+  .bubble-green {
+    background-color:#0bba4c;
+    animation-delay: 0.4s;
+  }
+  
