@@ -72,7 +72,7 @@ function Pages() {
         <Route path="/home" element={<Home />} />
         <Route path="/join" element={<Join joinSession={joinSession}/>} />
         <Route path="/play" element={<Play playerId={playerId} />} />
-        <Route path="/lobby" element={<Lobby />} />
+        <Route path="/lobby" element={<Lobby playerId={playerId} />} />
 
       </Routes>
     </>

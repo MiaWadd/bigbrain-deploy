@@ -45,7 +45,7 @@ function Play({ playerId }) {
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [correctAnswers, setCorrectAnswers] = useState([]);
 
-  playerId = 218490959; //TODO update
+  playerId = 374173910; //TODO update
   // If no playerId, redirect to join game
   useEffect(() => {
     // if (!localStorage.getItem('playerId')) {
