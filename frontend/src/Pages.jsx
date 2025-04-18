@@ -74,14 +74,9 @@ function Pages() {
   return (
     <>
       <nav className="p-4 bg-gray-100 mb-4 flex justify-between items-center">
-      <h1 className="text-4xl font-bold">BigBrain</h1>
-        <div>
-          {token && (
-            <Link to="/dashboard" className="text-blue-600 hover:underline">
-              Dashboard
-            </Link>
-          )}
-        </div>
+      <Link to="/dashboard" className="text-4xl font-bold text-black hover:underline">
+        BigBrain
+      </Link>
         <div>
           {token ? (
             <button
