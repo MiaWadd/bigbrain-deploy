@@ -48,8 +48,8 @@ function Play({ playerId }) {
   // playerId = 374173910; //TODO update
   // If no playerId, redirect to join game
   useEffect(() => {
-    // if (!localStorage.getItem('playerId')) {
-    if (!playerId) {
+    if (!localStorage.getItem('playerId')) {
+    // if (!playerId) {
       console.log("no playerID");
       navigate('/join');
     } else {
