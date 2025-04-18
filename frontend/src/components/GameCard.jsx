@@ -19,7 +19,7 @@ function GameCard({ game, onDelete }) {
   // Calculate total duration
   const calculateTotalDuration = (questions) => {
     if (!Array.isArray(questions)) return 0;
-    return questions.reduce((total, question) => total + (parseInt(question.time) || 0), 0);
+    return questions.reduce((total, question) => total + (parseInt(question.duration) || 0), 0);
   };
 
   // Check if game has an active session

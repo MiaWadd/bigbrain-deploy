@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+const BACKEND_PORT = 5005;
+const API_URL = `http://localhost:${BACKEND_PORT}`;
+
 const quotes = [
   "Waiting for players...",
   "Grab a snack while you wait...",
@@ -11,21 +14,21 @@ const quotes = [
   "I'm borded too...",
   "Please give us good marks...",
 ];
-// TODO: Check that game has not finished as well as has not started. 
+
 export default function Lobby({ playerId }) {
   const navigate = useNavigate();
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [error, setError] = useState(null);
 
-  // playerId = 374173910; //TODO update
-  // If no playerId, redirect to join game
+  // Check for playerId in localStorage
   useEffect(() => {
-    if (!localStorage.getItem('playerId')) {
-    // if (!playerId) {
+    const storedPlayerId = localStorage.getItem('playerId');
+    if (!storedPlayerId) {
       navigate('/join');
     }
-  }, [navigate]); 
+  }, [navigate]);
 
+  // Rotate quotes
   useEffect(() => {
     const interval = setInterval(() => {
       setQuoteIndex((prev) => (prev + 1) % quotes.length);
@@ -33,27 +36,59 @@ export default function Lobby({ playerId }) {
     return () => clearInterval(interval);
   }, []);
 
+  // Poll for game status
   useEffect(() => {
+    const storedPlayerId = localStorage.getItem('playerId');
+    if (!storedPlayerId) return;
+
     const poll = setInterval(async () => {
       try {
-        const response = await axios.get(`http://localhost:5005/play/${playerId}/question`);
-        // if (response.data.message === " ") {
+        const response = await axios.get(`${API_URL}/play/${storedPlayerId}/status`);
+        
+        // If game has started, navigate to play screen
+        if (response.data.started) {
           clearInterval(poll);
           navigate('/play');
-        // }
-        console.log(response);
+        }
+
+        // If game has ended, navigate to results
+        if (response.data.ended) {
+          clearInterval(poll);
+          navigate('/results');
+        }
       } catch (error) {
-        if (error.response.data.error !== "Session has not started yet") {
-          console.error(error.response.data.error);
+        const errorMessage = error.response?.data?.error || error.message;
+        // Only set error if it's not the expected "waiting" message
+        if (errorMessage !== "Session has not started yet") {
+          setError(errorMessage);
+          console.error('Error polling game status:', errorMessage);
         }
       }
     }, 3000);
+
     return () => clearInterval(poll);
-  }, [playerId]);
+  }, [navigate]);
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+        <div className="bg-red-50 border border-red-200 rounded p-4 text-red-700 max-w-md w-full text-center">
+          <p className="font-medium">Error</p>
+          <p className="text-sm mt-1">{error}</p>
+          <button
+            onClick={() => navigate('/join')}
+            className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          >
+            Return to Join Game
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <>      
-      <h1 className="text-5xl font-bold mb-20 mt-30 flex flex-col items-center justify-center">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+      <h1 className="text-5xl font-bold mb-20">
         Lobby
       </h1>
       <div className="flex flex-col items-center justify-center">
@@ -66,6 +101,6 @@ export default function Lobby({ playerId }) {
           {quotes[quoteIndex]}
         </p>
       </div>
-    </>
+    </div>
   );
 }
