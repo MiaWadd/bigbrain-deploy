@@ -70,12 +70,17 @@ function Play({ playerId }) {
       if (response.data.started) {
         try {
           const response = await axios.get(`http://localhost:5005/play/${playerId}/question`);
+          console.log(response);
           setGameHasStarted(true);
           setDuration(response.data.question.duration);
           setImage("./assets.react.svg"); // TODO CHAGE
-          setAnswers(response.data.question.answers);
-          setQuestion(response.data.question.question);   
-          setQuestionType(response.data.question.type);        
+          setQuestion(response.data.question.text);   
+          setQuestionType(response.data.question.type);  
+          if (response.data.question.type === 'judgement') {
+            setAnswers(['True', "False"]);
+          } else {
+            setAnswers(response.data.question.answers);
+          }    
         } catch (err) {
           console.log(err);
           if (err.response.data.error === "Session has not started yet") {
