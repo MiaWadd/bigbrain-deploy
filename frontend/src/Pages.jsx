@@ -14,6 +14,7 @@ import EditGame from './pages/EditGame';
 import EditQuestion from './pages/EditQuestion';
 import Play from './pages/Play'
 import Lobby from './pages/Lobby';
+import Results from './pages/Results';
 
 
 function Pages() {
@@ -108,6 +109,7 @@ function Pages() {
         <Route path="/game/:gameId" element={<EditGame />} />
         <Route path="/game/:gameId/question/:questionId" element={<EditQuestion />} />
         <Route path="/lobby" element={<Lobby playerId={playerId} />} />
+        <Route path="/results" element={<Results playerId={playerId} />} />
       </Routes>
     </>
   );
