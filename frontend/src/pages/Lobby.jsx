@@ -11,7 +11,7 @@ const quotes = [
   "I'm borded too...",
   "Please give us good marks...",
 ];
-
+// TODO: Check that game has not finished as well as has not started. 
 export default function Lobby({ playerId }) {
   const navigate = useNavigate();
   const [quoteIndex, setQuoteIndex] = useState(0);

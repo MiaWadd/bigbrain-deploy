@@ -15,6 +15,7 @@ import EditQuestion from './pages/EditQuestion';
 import Play from './pages/Play'
 import Lobby from './pages/Lobby';
 import Results from './pages/Results';
+import Join from './pages/Join';
 
 
 function Pages() {
@@ -42,7 +43,7 @@ function Pages() {
 
   const joinSession = (playerId) => {
     localStorage.setItem('playerId', playerId);
-    setToken(playerId);
+    setPlayerId(playerId);
     // navigate('/play');
   }
 
@@ -102,13 +103,14 @@ function Pages() {
         {/* Public Routes */}
         <Route path="/register" element={<Register token={token} updateToken={updateToken} />} />
         <Route path="/login" element={<Login token={token} updateToken={updateToken} />} />
-        <Route path="/play" element={<Play playerId={playerId} />} />
+        <Route path="/join" element={<Join playerId={playerId} joinSession={joinSession}/>} />
 
         {/* Protected Routes */}
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/game/:gameId" element={<EditGame />} />
         <Route path="/game/:gameId/question/:questionId" element={<EditQuestion />} />
         <Route path="/lobby" element={<Lobby playerId={playerId} />} />
+        <Route path="/play" element={<Play playerId={playerId} />} />
         <Route path="/results" element={<Results playerId={playerId} />} />
       </Routes>
     </>
