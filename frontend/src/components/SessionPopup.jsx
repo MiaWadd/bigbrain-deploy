@@ -4,7 +4,7 @@ function SessionPopup({ sessionId, onClose }) {
   const [copySuccess, setCopySuccess] = useState('');
   
   // Generate the play URL with the session ID
-  const playUrl = `${window.location.origin}/play?session=${sessionId || ''}`;
+  const playUrl = `${window.location.origin}/join?sessionId=${sessionId || ''}`;
   
   const copyToClipboard = async () => {
     try {
