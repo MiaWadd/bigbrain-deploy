@@ -34,12 +34,12 @@ function Login({ updateToken, token }) {
           <p className="text-red-600">{error}</p>
         </div>
       )}
-      <div className="mt-2 mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg outline outline-black/5 dark:bg-slate-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+      <div className="mt-2 mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg outline outline-black/5">
         <div className='w-full'>
-          <h1 className="text-3xl text-center font-large text-black dark:text-white">Login</h1>   
+          <h1 className="text-3xl text-center font-large text-black">Login</h1>   
           <form onSubmit={login}>
             <div className="max-w-sm mx-auto mt-5">
-              <label htmlFor="login-email" className="text-md font-normal text-black dark:text-white">Email</label>
+              <label htmlFor="login-email" className="text-md font-normal text-black">Email</label>
               <input
                 id='login-email' 
                 value={email} 
@@ -49,7 +49,7 @@ function Login({ updateToken, token }) {
               />
             </div>
             <div className="max-w-sm mx-auto mt-5">
-              <label htmlFor="login-password" className="text-md font-normal text-black dark:text-white">Password</label>
+              <label htmlFor="login-password" className="text-md font-normal text-black">Password</label>
               <input
                 id='login-password'
                 value={password} 
@@ -60,7 +60,7 @@ function Login({ updateToken, token }) {
             </div>
             <button type='submit' className="mt-5 px-4 py-2 w-full bg-blue-500 text-white rounded-lg hover:bg-blue-600" >{"Login"}</button>
           </form> 
-          <p className="mt-5 text-center text-md font-normal text-black dark:text-white">
+          <p className="mt-5 text-center text-md font-normal text-black">
             Don&rsquo;t have an account?{' '}
             <Link to="/register" className="text-blue-500 hover:underline hover:text-blue-700">Register</Link>
           </p>              
