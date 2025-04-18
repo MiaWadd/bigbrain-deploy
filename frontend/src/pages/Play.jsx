@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ReactPlayer from 'react-player';
 import axios from 'axios';
 
 const QUESTION_TYPES = {
@@ -7,6 +8,12 @@ const QUESTION_TYPES = {
   MULTIPLE_CHOICE: 'multiple-choice',
   JUDGEMENT: 'judgement',
 };
+
+// Helper to extract video ID from full URL
+function extractYouTubeID(url) {
+  const match = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
+  return match ? match[1] : '';
+}
 
 // Adds countdown to top right of screen
 function CountdownTimer({ duration, onExpire }) {
@@ -38,6 +45,7 @@ function Play({ playerId }) {
   // Question variables
   const [duration, setDuration] = useState('');
   const [image, setImage] = useState('');
+  const [video, setVideo] = useState('');
   const [answers, setAnswers] = useState([]);
   const [question, setQuestion] = useState('');
   const [timesUp, setTimesUp] = useState(false);
@@ -45,7 +53,7 @@ function Play({ playerId }) {
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [correctAnswers, setCorrectAnswers] = useState([]);
 
-  // playerId = 374173910; //TODO update
+  playerId = 920362626; //TODO update
   // If no playerId, redirect to join game
   useEffect(() => {
     if (!localStorage.getItem('playerId')) {
@@ -73,7 +81,6 @@ function Play({ playerId }) {
           console.log(response);
           setGameHasStarted(true);
           setDuration(response.data.question.duration);
-          setImage("./assets.react.svg"); // TODO CHAGE
           setQuestion(response.data.question.text);   
           setQuestionType(response.data.question.type);  
           if (response.data.question.type === 'judgement') {
@@ -81,6 +88,12 @@ function Play({ playerId }) {
           } else {
             setAnswers(response.data.question.answers);
           }    
+          console.log(response.data.question.media);
+          if (response.data.question.media.type === 'image') {
+            setImage(response.data.question.media.url);
+          } else if (response.data.question.media.type === 'youtube') {
+            setVideo(response.data.question.media.url);
+          } 
         } catch (err) {
           console.log(err);
           if (err.response.data.error === "Session has not started yet") {
@@ -148,6 +161,17 @@ function Play({ playerId }) {
               <CountdownTimer duration={duration} onExpire={handleTimeUp} />
               {image && (	
                 <img src={image} alt="Image for question" className="mx-auto mt-6 max-w-xl max-h-96"/>
+              )}
+              {video && (	
+                <ReactPlayer 
+                  url={video} 
+                  playing={true} 
+                  loop={true} 
+                  controls={false} 
+                  muted={true}
+                  alt="Image for video" 
+                  className="mx-auto mt-6 max-w-xl max-h-96"
+                />
               )}
               <h3 className="mt-5 text-center text-black text-4xl font-bold">{question}</h3>
               <div className="mt-6 flex flex-col gap-4 items-center">
