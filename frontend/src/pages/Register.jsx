@@ -44,12 +44,12 @@ function Register({ updateToken, token }) {
           <p className="text-red-600">{error}</p>
         </div>
       )}
-      <div className="mt-2 mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg outline outline-black/5 dark:bg-slate-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+      <div className="mt-2 mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg outline outline-black/5">
         <div className='w-full'>
-          <h1 className="text-3xl text-center font-large text-black dark:text-white">Register</h1>  
+          <h1 className="text-3xl text-center font-large text-black">Register</h1>  
           <form onSubmit={register}>
             <div className="max-w-sm mx-auto mt-5">
-              <label className="text-md font-normal text-black dark:text-white">Email</label>
+              <label className="text-md font-normal text-black">Email</label>
               <input
                 value={email} 
                 onChange={e => setEmail(e.target.value)}
@@ -59,7 +59,7 @@ function Register({ updateToken, token }) {
               />
             </div>
             <div className="max-w-sm mx-auto mt-5">
-              <label className="text-md font-normal text-black dark:text-white">Name</label>
+              <label className="text-md font-normal text-black">Name</label>
               <input
                 value={name} 
                 onChange={e => setName(e.target.value)}
@@ -69,7 +69,7 @@ function Register({ updateToken, token }) {
               />
             </div>
             <div className="max-w-sm mx-auto mt-5">
-              <label className="text-md font-normal text-black dark:text-white">Password</label>
+              <label className="text-md font-normal text-black">Password</label>
               <input
                 value={password} 
                 onChange={e => setPassword(e.target.value)}
@@ -79,7 +79,7 @@ function Register({ updateToken, token }) {
               />
             </div>
             <div className="max-w-sm mx-auto mt-5">
-              <label className="text-md font-normal text-black dark:text-white">Confirm Password</label>
+              <label className="text-md font-normal text-black">Confirm Password</label>
               <input
                 value={confirmPassword} 
                 onChange={e => setConfirmPassword(e.target.value)}
@@ -90,7 +90,7 @@ function Register({ updateToken, token }) {
             </div>
             <button type='submit' className="mt-6 px-4 py-2 w-full bg-blue-500 text-white rounded-lg hover:bg-blue-600" >{"Register"}</button>
           </form> 
-          <p className="mt-5 text-center text-md font-normal text-black dark:text-white">
+          <p className="mt-5 text-center text-md font-normal text-black">
             Already have an account?{' '}
             <Link to="/login" className="text-blue-500 hover:underline hover:text-blue-700">Login</Link>
           </p>               

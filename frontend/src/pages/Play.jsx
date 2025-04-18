@@ -66,6 +66,7 @@ function Play({ playerId }) {
   const currState = async () => {
     try {
       const response = await axios.get(`http://localhost:5005/play/${playerId}/status`);
+      console.log(response.data)
       if (response.data.started) {
         try {
           const response = await axios.get(`http://localhost:5005/play/${playerId}/question`);
@@ -83,6 +84,7 @@ function Play({ playerId }) {
           }
         }
       } else {
+
         console.log("Game has not started.. need to play around to find out when this is");
         setGameHasStarted(false);
         navigate('/lobby');

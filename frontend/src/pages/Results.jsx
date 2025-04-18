@@ -8,7 +8,7 @@ export default function Results({ playerId }) {
   const [resultsData, setResultsData] = useState([]);
 
   // TODO: Update this
-  playerId = 374173910;
+  // playerId = 374173910;
 
   useEffect(() => {
     if (!localStorage.getItem('playerId')) {

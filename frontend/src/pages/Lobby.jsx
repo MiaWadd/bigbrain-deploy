@@ -38,8 +38,8 @@ export default function Lobby({ playerId }) {
       try {
         const response = await axios.get(`http://localhost:5005/play/${playerId}/question`);
         // if (response.data.message === " ") {
-        //   clearInterval(poll);
-        //   navigate('/play');
+          clearInterval(poll);
+          navigate('/play');
         // }
         console.log(response);
       } catch (error) {
