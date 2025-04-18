@@ -170,6 +170,12 @@ function GameCard({ game, onDelete }) {
           {isActive && (
             <p className="text-green-600 font-medium">
               Session Active • ID: {sessionId}
+              <button
+                onClick={() => navigate(`/session/${sessionId}`)}
+                className="ml-2 text-blue-600 hover:text-blue-800 text-sm underline"
+              >
+                Control Session
+              </button>
             </p>
           )}
         </div>
