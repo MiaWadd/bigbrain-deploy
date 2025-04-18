@@ -11,16 +11,17 @@ const quotes = [
   "I'm borded too...",
   "Please give us good marks...",
 ];
-
+// TODO: Check that game has not finished as well as has not started. 
 export default function Lobby({ playerId }) {
   const navigate = useNavigate();
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [error, setError] = useState(null);
 
-  playerId = 374173910; //TODO update
+  // playerId = 374173910; //TODO update
   // If no playerId, redirect to join game
   useEffect(() => {
-    if (!playerId) {
+    if (!localStorage.getItem('playerId')) {
+    // if (!playerId) {
       navigate('/join');
     }
   }, [navigate]); 

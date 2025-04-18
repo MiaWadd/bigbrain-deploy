@@ -45,11 +45,12 @@ function Play({ playerId }) {
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [correctAnswers, setCorrectAnswers] = useState([]);
 
-  playerId = 374173910; //TODO update
+  // playerId = 374173910; //TODO update
   // If no playerId, redirect to join game
   useEffect(() => {
-    // if (!localStorage.getItem('playerId')) {
-    if (!playerId) {
+    if (!localStorage.getItem('playerId')) {
+    // if (!playerId) {
+      console.log("no playerID");
       navigate('/join');
     } else {
       setPlayerValid(true);
@@ -75,6 +76,7 @@ function Play({ playerId }) {
           setQuestion(response.data.question.question);   
           setQuestionType(response.data.question.type);        
         } catch (err) {
+          console.log(err);
           if (err.response.data.error === "Session has not started yet") {
             setGameHasStarted(false);
             navigate('/lobby');
@@ -82,6 +84,8 @@ function Play({ playerId }) {
         }
       } else {
         console.log("Game has not started.. need to play around to find out when this is");
+        setGameHasStarted(false);
+        navigate('/lobby');
       }
     } catch {
       // Player is not a part of the game

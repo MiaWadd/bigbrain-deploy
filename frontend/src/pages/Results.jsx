@@ -11,7 +11,8 @@ export default function Results({ playerId }) {
   playerId = 374173910;
 
   useEffect(() => {
-    if (!playerId) {
+    if (!localStorage.getItem('playerId')) {
+    // if (!playerId) {
       navigate('/join');
       return;
     }
