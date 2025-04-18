@@ -9,7 +9,6 @@ function JoinGame({ joinSession }) {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-
   // If URL already has sessionId, populate it
   useEffect(() => {
     const params = new URLSearchParams(location.search);
