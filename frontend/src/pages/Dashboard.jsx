@@ -4,12 +4,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import CreateGameModal from '../components/CreateGameModal';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import GameCard from '../components/GameCard';
+import Navbar from '../components/Navbar';
 
 // Define the backend URL
 const BACKEND_PORT = 5005;
 const API_URL = `http://localhost:${BACKEND_PORT}`;
 
-function Dashboard() {
+function Dashboard({ token, updateToken }) {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -202,43 +203,51 @@ function Dashboard() {
   }
 
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
-        <button
-          onClick={() => setIsCreateModalOpen(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        >
-          Create New Game
-        </button>
+    <div className="min-h-screen bg-gray-100">
+      <Navbar showLogout={true} onLogout={() => {
+        updateToken(null);
+        navigate('/login');
+      }} />
+
+      {/* Main Content */}
+      <div className="p-4 sm:p-6 lg:p-8">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          >
+            Create New Game
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {games.length === 0 ? (
+            <p className="text-gray-500 col-span-full text-center py-10">No games found. Create one!</p>
+          ) : (
+            games.map((game) => (
+              <GameCard
+                key={game.id || game.gameId}
+                game={game}
+                onDelete={() => setDeleteGame(game)}
+              />
+            ))
+          )}
+        </div>
+
+        <CreateGameModal
+          isOpen={isCreateModalOpen}
+          onClose={() => setIsCreateModalOpen(false)}
+          onCreateGame={handleCreateGame}
+        />
+
+        <DeleteConfirmationModal
+          isOpen={deleteGame !== null}
+          onClose={() => setDeleteGame(null)}
+          onConfirm={handleDeleteGame}
+          gameName={deleteGame?.name || ''}
+        />
       </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {games.length === 0 ? (
-          <p className="text-gray-500 col-span-full text-center py-10">No games found. Create one!</p>
-        ) : (
-          games.map((game) => (
-            <GameCard
-              key={game.id || game.gameId}
-              game={game}
-              onDelete={() => setDeleteGame(game)}
-            />
-          ))
-        )}
-      </div>
-
-      <CreateGameModal
-        isOpen={isCreateModalOpen}
-        onClose={() => setIsCreateModalOpen(false)}
-        onCreateGame={handleCreateGame}
-      />
-
-      <DeleteConfirmationModal
-        isOpen={deleteGame !== null}
-        onClose={() => setDeleteGame(null)}
-        onConfirm={handleDeleteGame}
-        gameName={deleteGame?.name || ''}
-      />
     </div>
   );
 }
