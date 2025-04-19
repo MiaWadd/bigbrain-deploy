@@ -33,7 +33,7 @@ function CountdownTimer({ endTime, onExpire }) {
   } , [secondsLeft, endTime, onExpire, hasExpired]);
 
   return (
-    <div className="absolute top-20 right-4 px-6 py-3 text-black text-8xl font-extrabold z-50">
+    <div className="fixed top-0 right-0 px-6 py-3 text-black text-8xl font-extrabold z-50">
       {secondsLeft <= 3 ? (
         <span className="text-red-600">{secondsLeft}</span>
       ) : (
