@@ -1,3 +1,6 @@
+console.log("Pages.jsx loaded");
+
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import {
@@ -19,15 +22,13 @@ import Join from './pages/Join';
 
 
 function Pages() {
+  console.log("Pages.jsx loaded");
+
   const [token, setToken] = useState(null);
   const [playerId, setPlayerId] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // const storedToken = localStorage.getItem('token');
-    // if (storedToken) {
-    //   setToken(storedToken);
-    // }
     setToken(localStorage.getItem('token'));
   }, []);
 
@@ -44,7 +45,6 @@ function Pages() {
   const joinSession = (playerId) => {
     localStorage.setItem('playerId', playerId);
     setPlayerId(playerId);
-    // navigate('/play');
   }
 
   const logout = async () => {
@@ -85,7 +85,7 @@ function Pages() {
         <Route path="/game/:gameId/question/:questionId" element={<EditQuestion />} />
         <Route path="/lobby" element={<Lobby playerId={playerId} />} />
         <Route path="/play" element={<Play />} />
-        <Route path="/results" element={<Results playerId={playerId} />} />
+        <Route path="/results" element={<Results />} />
       </Routes>
     </>
   );

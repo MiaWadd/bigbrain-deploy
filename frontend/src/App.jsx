@@ -9,6 +9,7 @@ import Join from './pages/Join';
 import Lobby from './pages/Lobby';
 import SessionControl from './pages/SessionControl';
 import Play from './pages/Play';
+import Results from './pages/Results';
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -75,6 +76,7 @@ function App() {
         <Route path="/join" element={<Join />} />
         <Route path="/lobby" element={<Lobby />} />
         <Route path="/play" element={<Play />} />
+        <Route path="/results" element={<Results />} />
         <Route 
           path="/session/:sessionId" 
           element={

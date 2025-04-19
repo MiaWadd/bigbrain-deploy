@@ -157,6 +157,11 @@ function Play() {
         setGameHasStarted(false);
         navigate('/lobby');
       }
+      // Game has completed
+      if (err.response.data.error === "Session ID is not an active session" && gameHasStarted) {
+        setGameHasStarted(false);
+        navigate('/results');
+      }
     }
   };
   
@@ -269,7 +274,7 @@ function Play() {
               </div>
             </>
           ) : (
-            <p className="text-center text-2xl font-semibold mt-10">Waiting for game to start ...</p>
+            <p className="text-center text-2xl font-semibold mt-10">Waiting for game to start  TODO CHANGE...</p>
           )}
         </>
       )}

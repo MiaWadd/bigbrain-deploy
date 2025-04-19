@@ -2,26 +2,32 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-export default function Results({ playerId }) {
+function Results() {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [resultsData, setResultsData] = useState([]);
-
-  // TODO: Update this
-  // playerId = 374173910;
+  const [playerId, setPlayerId] = useState('');
 
   useEffect(() => {
     if (!localStorage.getItem('playerId')) {
-    // if (!playerId) {
       navigate('/join');
-      return;
+    } else {
+      setPlayerId(localStorage.getItem('playerId'));
     }
+  }, [navigate]); 
+
+  useEffect(() => {
+    if (playerId) {
+      fetchResults();
+    }
+  }, [playerId]);
 
     const fetchResults = async () => {
       try {
         const response = await axios.get(
           `http://localhost:5005/play/${playerId}/results`
         );
+        console.log(response.data);
         setResultsData(response.data);
       } catch (error) {
         if (error.response.data.error === 'Session has not started yet') {
@@ -36,8 +42,6 @@ export default function Results({ playerId }) {
         }
       }
     };
-    fetchResults();
-  }, [playerId, navigate]);
 
   return (
     <>
@@ -74,3 +78,5 @@ export default function Results({ playerId }) {
     </>
   );
 }
+
+export default Results;
