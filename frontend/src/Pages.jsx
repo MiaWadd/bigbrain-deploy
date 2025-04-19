@@ -73,27 +73,6 @@ function Pages() {
 
   return (
     <>
-      <nav className="p-4 bg-gray-100 mb-4 flex justify-between items-center">
-      <Link to="/dashboard" className="text-4xl font-bold text-black hover:underline">
-        BigBrain
-      </Link>
-        <div>
-          {token ? (
-            <button
-              onClick={logout}
-              className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-            >
-              Logout
-            </button>
-          ) : (
-            <>
-              <Link to="/register" className="mr-4 text-blue-600 hover:underline">Register</Link>
-              <Link to="/login" className="text-blue-600 hover:underline">Login</Link>
-            </>
-          )}
-        </div>
-      </nav>
-
       <Routes>
         {/* Public Routes */}
         <Route path="/register" element={<Register token={token} updateToken={updateToken} />} />

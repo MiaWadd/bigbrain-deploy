@@ -2,9 +2,13 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+const BACKEND_PORT = 5005;
+const API_URL = `http://localhost:${BACKEND_PORT}`;
+
 function JoinGame({ joinSession }) {
   const [sessionId, setSessionId] = useState('');
   const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);
   const location = useLocation();
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -12,7 +16,7 @@ function JoinGame({ joinSession }) {
   // If URL already has sessionId, populate it
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const sessionFromURL = params.get('sessionId');
+    const sessionFromURL = params.get('session');
     if (sessionFromURL) {
       setSessionId(sessionFromURL);
     }
@@ -20,26 +24,42 @@ function JoinGame({ joinSession }) {
 
   const joinGame = async (e) => {
     e.preventDefault();
+    setError(null);
+    setLoading(true);
+
     try {
-      const response = await axios.post(`http://localhost:5005/play/join/${sessionId}`, {
+      const response = await axios.post(`${API_URL}/play/join/${sessionId}`, {
         name: name,
       });
-      joinSession(response.data.playerId);
-      navigate('/play');
-    } catch (err) {
-        console.log(err);
-      if (err.response.data.error === "Session ID is not an active session") {
-        setError('Session ID is not vaild');
+
+      // Check if we have a valid response with playerId
+      if (response?.data?.playerId) {
+        // Store playerId in localStorage
+        localStorage.setItem('playerId', response.data.playerId);
+        // Navigate to lobby to wait for game to start
+        navigate('/lobby');
       } else {
-        setError(err.response.data.error);
+        throw new Error('Invalid response from server');
       }
+    } catch (err) {
+      console.error('Join game error:', err);
+      if (err.response?.status === 400) {
+        setError(err.response.data.error || 'Session ID is not valid');
+      } else if (err.response?.status === 403) {
+        setError('Session is not active');
+      } else {
+        setError('Failed to join game. Please try again.');
+      }
+    } finally {
+      setLoading(false);
     }
-  }
+  };
+
   return (
     <>
       <div className="p-4 sm:p-6 lg:p-8">
         {error && (
-          <div className=" mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
             <p className="text-red-600">{error}</p>
           </div>
         )}
@@ -69,12 +89,22 @@ function JoinGame({ joinSession }) {
                 className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
-            <button type='submit' className="mt-5 px-4 py-2 w-full bg-blue-500 text-white rounded-lg hover:bg-blue-600" >{"Join Game"}</button>
+            <button 
+              type='submit' 
+              disabled={loading}
+              className={`mt-5 px-4 py-2 w-full rounded-lg ${
+                loading 
+                  ? 'bg-blue-300 cursor-not-allowed' 
+                  : 'bg-blue-500 hover:bg-blue-600'
+              } text-white`}
+            >
+              {loading ? 'Joining...' : 'Join Game'}
+            </button>
           </form>          
         </div>
       </div>
     </>
-  )
+  );
 }
 
 export default JoinGame;

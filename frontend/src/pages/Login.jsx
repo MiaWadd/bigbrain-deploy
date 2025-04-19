@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import NavBar from '../components/Navbar';
+
+const BACKEND_PORT = 5005;
+const API_URL = `http://localhost:${BACKEND_PORT}`;
 
 function Login({ updateToken, token }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,25 +21,48 @@ function Login({ updateToken, token }) {
 
   const login = async (e) => {
     e.preventDefault();
+    setError(null);
+    setLoading(true);
+
     try {
-      const response = await axios.post(`http://localhost:5005/admin/auth/login`, {
+      const response = await axios.post(`${API_URL}/admin/auth/login`, {
         email: email,
         password: password,
       });
-      const token = response.data.token;
-      updateToken(token);
+
+      // Check if we have a valid response with token
+      if (response?.data?.token) {
+        updateToken(response.data.token);
+        navigate('/dashboard');
+      } else {
+        throw new Error('Invalid response from server');
+      }
     } catch (err) {
-      setError(err.response.data.error);
+      console.error('Login error:', err);
+      if (err.response?.data?.error) {
+        setError(err.response.data.error);
+      } else if (err.response?.status === 400) {
+        setError('Invalid email or password');
+      } else {
+        setError('Failed to login. Please try again.');
+      }
+    } finally {
+      setLoading(false);
     }
-  }
+  };
+
   return (
-    <div className="p-4 sm:p-6 lg:p-8">
-      {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-600">{error}</p>
-        </div>
-      )}
-      <div className="mt-2 mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg outline outline-black/5">
+    <div className="min-h-screen bg-gray-100">
+      <NavBar />
+      <div className="p-4 sm:p-6 lg:p-8">
+        {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-600">{error}</p>
+          </div>
+        )}
+      </div>
+
+      <div className="mt-10 mx-auto flex max-w-sm items-center gap-x-4 rounded-xl bg-white p-6 shadow-lg outline outline-black/5">
         <div className='w-full'>
           <h1 className="text-3xl text-center font-large text-black">Login</h1>   
           <form onSubmit={login}>
@@ -45,6 +73,7 @@ function Login({ updateToken, token }) {
                 value={email} 
                 onChange={e => setEmail(e.target.value)}
                 type="email"
+                required
                 className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
@@ -55,10 +84,21 @@ function Login({ updateToken, token }) {
                 value={password} 
                 onChange={e => setPassword(e.target.value)}
                 type="password"
+                required
                 className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
-            <button type='submit' className="mt-5 px-4 py-2 w-full bg-blue-500 text-white rounded-lg hover:bg-blue-600" >{"Login"}</button>
+            <button 
+              type='submit'
+              disabled={loading} 
+              className={`mt-5 px-4 py-2 w-full rounded-lg ${
+                loading 
+                  ? 'bg-blue-400 cursor-not-allowed'
+                  : 'bg-blue-500 hover:bg-blue-600'
+              } text-white`}
+            >
+              {loading ? 'Logging in...' : 'Login'}
+            </button>
           </form> 
           <p className="mt-5 text-center text-md font-normal text-black">
             Don&rsquo;t have an account?{' '}
@@ -67,7 +107,7 @@ function Login({ updateToken, token }) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default Login;
