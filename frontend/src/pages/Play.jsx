@@ -4,11 +4,8 @@ import ReactPlayer from 'react-player';
 import axios from 'axios';
 
 // ÷BUGS :
-// Timer does not reset on nect question FIXED
 // answer selection does not save on refresh
 // Answers not yet availble o refesh
-// Answering question is faulty
-// Single choice giving three options but only 2 answers...TODO
 
 const QUESTION_TYPES = {
   SINGLE_CHOICE: 'single-choice',
@@ -77,6 +74,8 @@ function Play() {
   const [correctAnswers, setCorrectAnswers] = useState([]);
   const [endTime, setEndTime] = useState(null);
   const [currQuestion, setCurrQuestion] = useState(null);
+
+  const [error, setError] = useState(null);
 
 
   // If no playerId, redirect to join game
@@ -163,6 +162,7 @@ function Play() {
   
 
   const handleTimeUp = async () => {
+    setError(null);
     console.log("Time's up! Locking in answer / showing result.");
     setTimesUp(true);
     setTimeout(async () => {
@@ -177,6 +177,7 @@ function Play() {
   };
 
   const handleAnswerClick = async (selectedAnswer) => {
+    setError(null);
     let updatedSelection = [];
     // If it is  single choice or judegment question, change the selected answer by either removing an already selected or selecting a new one
     if (questionType === QUESTION_TYPES.SINGLE_CHOICE || questionType === QUESTION_TYPES.JUDGEMENT) {
@@ -193,21 +194,31 @@ function Play() {
         updatedSelection = selectedAnswers.concat(selectedAnswer);
       }
     }
-    setSelectedAnswers(updatedSelection);
-    console.log("new answer submitted:");
-    console.log(updatedSelection);
-
-    try {
-      await axios.put(`http://localhost:5005/play/${playerId}/answer`, {
-        answers: updatedSelection,
-      });
-    } catch (error) {
-      console.log(error);
+    if (updatedSelection.length === 0) {
+      setError('Must select at least one answer');
+    } else {
+      setSelectedAnswers(updatedSelection);
+      console.log("new answer submitted:");
+      console.log(updatedSelection);
+      try {
+        await axios.put(`http://localhost:5005/play/${playerId}/answer`, {
+          answers: updatedSelection,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
+
+    
   };
 
   return (
     <>
+      {error && (
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-600">{error}</p>
+          </div>
+        )}
       {playerId && (
         <>
           {gameHasStarted ? (
@@ -229,9 +240,12 @@ function Play() {
                 />
               )}
               <h3 className="mt-5 text-center text-black text-4xl font-bold">{question}</h3>
+              {questionType === QUESTION_TYPES.MULTIPLE_CHOICE && (
+                <p className='text-center'>(Select Multiple)</p>
+              )}
               <div className="mt-6 flex flex-col gap-4 items-center">
                 {answers.map((answer, index) => {
-                  const isSelected = selectedAnswers.includes(answer);
+                  const isSelected = selectedAnswers.includes(index);
                   const isCorrect = correctAnswers.includes(index);
                   let baseStyle = "text-white text-lg font-semibold px-6 py-3 rounded-xl shadow-md transition-all duration-200 w-3/4 max-w-xl";
                   let bgColor = "bg-blue-600 hover:bg-blue-700";
@@ -244,7 +258,7 @@ function Play() {
                   return (
                     <button
                       key={index}
-                      onClick={() => !timesUp && handleAnswerClick(answer)}
+                      onClick={() => !timesUp && handleAnswerClick(index)}
                       className={`${bgColor} ${baseStyle}`}
                       disabled={timesUp}
                     >
