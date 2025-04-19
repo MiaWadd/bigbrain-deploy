@@ -2,6 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import axios from 'axios';
+import CountdownTimer from '../components/QuestionCountdown';
+
+// ÷BUGS :
+// answer selection does not save on refresh
+// Answers not yet availble o refesh
 
 const QUESTION_TYPES = {
   SINGLE_CHOICE: 'single-choice',
@@ -9,41 +14,12 @@ const QUESTION_TYPES = {
   JUDGEMENT: 'judgement',
 };
 
-// Helper to extract video ID from full URL
-function extractYouTubeID(url) {
-  const match = url.match(/(?:v=|\/)([0-9A-Za-z_-]{11})/);
-  return match ? match[1] : '';
-}
-
-// Adds countdown to top right of screen
-function CountdownTimer({ duration, onExpire }) {
-  const [secondsLeft, setSecondsLeft] = useState(duration);
-  useEffect(() => {
-    if (secondsLeft <= 0) {
-      if (onExpire) onExpire();
-      return;
-    }
-    const interval = setInterval(() => {
-      setSecondsLeft(prev => prev - 1);
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [secondsLeft, onExpire]);
-  return (
-    <>
-      <div className="absolute top-20 right-4 px-6 py-3 text-black text-8xl font-extrabold z-50">
-        {secondsLeft}
-      </div>
-    </>
-  );
-}
-
-function Play({ playerId }) {
+function Play() {
   const navigate = useNavigate();
   // Game varaibles 
-  const [playerValid, setPlayerValid] = useState(false);
+  const [playerId, setPlayerId] = useState('');
   const [gameHasStarted, setGameHasStarted] = useState(false);
   // Question variables
-  const [duration, setDuration] = useState('');
   const [image, setImage] = useState('');
   const [video, setVideo] = useState('');
   const [answers, setAnswers] = useState([]);
@@ -52,80 +28,114 @@ function Play({ playerId }) {
   const [questionType, setQuestionType] = useState('');
   const [selectedAnswers, setSelectedAnswers] = useState([]);
   const [correctAnswers, setCorrectAnswers] = useState([]);
+  const [endTime, setEndTime] = useState(null);
+  const [currQuestion, setCurrQuestion] = useState(null);
 
-  playerId = 920362626; //TODO update
+  const [error, setError] = useState(null);
+
+
   // If no playerId, redirect to join game
   useEffect(() => {
     if (!localStorage.getItem('playerId')) {
-    // if (!playerId) {
-      console.log("no playerID");
       navigate('/join');
     } else {
-      setPlayerValid(true);
+      setPlayerId(localStorage.getItem('playerId'));
     }
   }, [navigate]); 
 
+  // Inital game load
   useEffect(() => {
-    if (playerValid && playerId) {
-      currState();
+    if (playerId) {
+      loadGame();
     }
-  }, [playerValid, playerId]);
+  }, [playerId]);
 
-  const currState = async () => {
+  const loadGame = async () => {
     try {
       const response = await axios.get(`http://localhost:5005/play/${playerId}/status`);
-      console.log(response.data)
       if (response.data.started) {
-        try {
-          const response = await axios.get(`http://localhost:5005/play/${playerId}/question`);
-          console.log(response);
-          setGameHasStarted(true);
-          setDuration(response.data.question.duration);
-          setQuestion(response.data.question.text);   
-          setQuestionType(response.data.question.type);  
-          if (response.data.question.type === 'judgement') {
-            setAnswers(['True', "False"]);
-          } else {
-            setAnswers(response.data.question.answers);
-          }    
-          console.log(response.data.question.media);
-          if (response.data.question.media.type === 'image') {
-            setImage(response.data.question.media.url);
-          } else if (response.data.question.media.type === 'youtube') {
-            setVideo(response.data.question.media.url);
-          } 
-        } catch (err) {
-          console.log(err);
-          if (err.response.data.error === "Session has not started yet") {
-            setGameHasStarted(false);
-            navigate('/lobby');
-          }
-        }
+        setGameHasStarted(true);
+        await loadQuestion();
       } else {
-
-        console.log("Game has not started.. need to play around to find out when this is");
         setGameHasStarted(false);
         navigate('/lobby');
       }
-    } catch {
-      // Player is not a part of the game
+    } catch (err) {
+      console.log(err);
       navigate('/join');
     }
   };
 
-  const handleTimeUp = async () => {
-    console.log("Time's up! Locking in answer / showing result.");
-    setTimesUp(true);
+  // Load question every sesond to determine if the game has progressed
+  useEffect(() => {
+    if (!playerId || !gameHasStarted) return;
+    const interval = setInterval(() => {
+      loadQuestion();
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [playerId, gameHasStarted, currQuestion]);
+  
+  const loadQuestion = async () => {
     try {
-      const response = await axios.get(`http://localhost:5005/play/${playerId}/answer`);
-      console.log(response.data.answerIds);
-      setCorrectAnswers(response.data.answerIds);
-    } catch (error) {
-      console.log(error);
+      const response = await axios.get(`http://localhost:5005/play/${playerId}/question`);
+      const questionData = response.data.question;
+      // If this is the first question or the question has changed, update variables
+      if (!currQuestion || currQuestion.id !== questionData.id) {
+        setCurrQuestion(questionData);
+        // setGameHasStarted(true);
+        const startTime = new Date(questionData.isoTimeLastQuestionStarted);
+        setEndTime(new Date(startTime.getTime() + questionData.duration * 1000));
+        setQuestion(questionData.text);
+        setQuestionType(questionData.type);
+        setSelectedAnswers([]);
+        setCorrectAnswers([]);
+        setTimesUp(false);
+        if (questionData.type === 'judgement') {
+          setAnswers(['True', "False"]);
+        } else {
+          setAnswers(questionData.answers);
+        }
+        if (questionData.media.type === 'image') {
+          setImage(questionData.media.url);
+          setVideo('');
+        } else if (questionData.media.type === 'youtube') {
+          setVideo(questionData.media.url);
+          setImage('');
+        } else {
+          setImage('');
+          setVideo('');
+        }
+      }
+    } catch (err) {
+      if (err.response.data.error === "Session has not started yet") {
+        setGameHasStarted(false);
+        navigate('/lobby');
+      }
+      // Game has completed
+      if (err.response.data.error === "Session ID is not an active session" && gameHasStarted) {
+        setGameHasStarted(false);
+        navigate('/results');
+      }
+      console.log(err); // TODO
     }
+  };
+  
+
+  const handleTimeUp = async () => {
+    setError(null);
+    setTimesUp(true);
+    setTimeout(async () => {
+      try {
+        const response = await axios.get(`http://localhost:5005/play/${playerId}/answer`);
+        setCorrectAnswers(response.data.answerIds);
+      } catch (error) {
+        console.log(error);
+      }
+    }, 1000);
   };
 
   const handleAnswerClick = async (selectedAnswer) => {
+    setError(null);
     let updatedSelection = [];
     // If it is  single choice or judegment question, change the selected answer by either removing an already selected or selecting a new one
     if (questionType === QUESTION_TYPES.SINGLE_CHOICE || questionType === QUESTION_TYPES.JUDGEMENT) {
@@ -142,23 +152,35 @@ function Play({ playerId }) {
         updatedSelection = selectedAnswers.concat(selectedAnswer);
       }
     }
-    setSelectedAnswers(updatedSelection);
-    try {
-      await axios.put(`http://localhost:5005/play/${playerId}/answer`, {
-        answers: updatedSelection,
-      });
-    } catch (error) {
-      console.log(error);
+    if (updatedSelection.length === 0) {
+      setError('Must select at least one answer');
+    } else {
+      setSelectedAnswers(updatedSelection);
+      try {
+        await axios.put(`http://localhost:5005/play/${playerId}/answer`, {
+          answers: updatedSelection,
+        });
+      } catch (error) {
+        console.log(error);
+      }
     }
+
+    
   };
 
   return (
     <>
-      {playerValid && (
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600">{error}</p>
+        </div>
+      )}
+      {playerId && (
         <>
           {gameHasStarted ? (
             <>
-              <CountdownTimer duration={duration} onExpire={handleTimeUp} />
+              {/* <CountdownTimer duration={duration} onExpire={handleTimeUp} /> */}
+              {endTime && <CountdownTimer endTime={endTime} onExpire={handleTimeUp} />}
               {image && (	
                 <img src={image} alt="Image for question" className="mx-auto mt-6 max-w-xl max-h-96"/>
               )}
@@ -174,10 +196,13 @@ function Play({ playerId }) {
                 />
               )}
               <h3 className="mt-5 text-center text-black text-4xl font-bold">{question}</h3>
+              {questionType === QUESTION_TYPES.MULTIPLE_CHOICE && (
+                <p className='text-center'>(Select Multiple)</p>
+              )}
               <div className="mt-6 flex flex-col gap-4 items-center">
                 {answers.map((answer, index) => {
-                  const isSelected = selectedAnswers.includes(answer);
-                  const isCorrect = correctAnswers.includes(answer);
+                  const isSelected = selectedAnswers.includes(index);
+                  const isCorrect = correctAnswers.includes(index);
                   let baseStyle = "text-white text-lg font-semibold px-6 py-3 rounded-xl shadow-md transition-all duration-200 w-3/4 max-w-xl";
                   let bgColor = "bg-blue-600 hover:bg-blue-700";
                   if (timesUp && isCorrect) {
@@ -189,7 +214,7 @@ function Play({ playerId }) {
                   return (
                     <button
                       key={index}
-                      onClick={() => !timesUp && handleAnswerClick(answer)}
+                      onClick={() => !timesUp && handleAnswerClick(index)}
                       className={`${bgColor} ${baseStyle}`}
                       disabled={timesUp}
                     >
@@ -200,7 +225,7 @@ function Play({ playerId }) {
               </div>
             </>
           ) : (
-            <p className="text-center text-2xl font-semibold mt-10">Waiting for game to start ...</p>
+            <p className="text-center text-2xl font-semibold mt-10">Waiting for game to start  TODO CHANGE...</p>
           )}
         </>
       )}

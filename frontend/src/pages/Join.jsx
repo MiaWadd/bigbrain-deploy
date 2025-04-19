@@ -5,7 +5,7 @@ import axios from 'axios';
 const BACKEND_PORT = 5005;
 const API_URL = `http://localhost:${BACKEND_PORT}`;
 
-function JoinGame({ joinSession }) {
+function JoinGame() {
   const [sessionId, setSessionId] = useState('');
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
@@ -16,7 +16,7 @@ function JoinGame({ joinSession }) {
   // If URL already has sessionId, populate it
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const sessionFromURL = params.get('session');
+    const sessionFromURL = params.get('sessionId');
     if (sessionFromURL) {
       setSessionId(sessionFromURL);
     }
@@ -33,7 +33,7 @@ function JoinGame({ joinSession }) {
       });
 
       // Check if we have a valid response with playerId
-      if (response?.data?.playerId) {
+      if (response.data.playerId) {
         // Store playerId in localStorage
         localStorage.setItem('playerId', response.data.playerId);
         // Navigate to lobby to wait for game to start
@@ -43,9 +43,9 @@ function JoinGame({ joinSession }) {
       }
     } catch (err) {
       console.error('Join game error:', err);
-      if (err.response?.status === 400) {
+      if (err.response.status === 400) {
         setError(err.response.data.error || 'Session ID is not valid');
-      } else if (err.response?.status === 403) {
+      } else if (err.response.status === 403) {
         setError('Session is not active');
       } else {
         setError('Failed to join game. Please try again.');

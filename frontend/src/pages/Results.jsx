@@ -2,42 +2,43 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-export default function Results({ playerId }) {
+function Results() {
   const navigate = useNavigate();
   const [error, setError] = useState(null);
   const [resultsData, setResultsData] = useState([]);
-
-  // TODO: Update this
-  // playerId = 374173910;
+  const [playerId, setPlayerId] = useState('');
 
   useEffect(() => {
     if (!localStorage.getItem('playerId')) {
-    // if (!playerId) {
       navigate('/join');
-      return;
+    } else {
+      setPlayerId(localStorage.getItem('playerId'));
     }
+  }, [navigate]); 
 
-    const fetchResults = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5005/play/${playerId}/results`
-        );
-        setResultsData(response.data);
-      } catch (error) {
-        if (error.response.data.error === 'Session has not started yet') {
-          console.log('Redirect to lobby');
-          navigate('/lobby');
-        } else if (error.response.data.error === 'Session is ongoing, cannot get results yet') {
-          console.log('Redirect to play');
-          navigate('/play');
-        } else {
-          console.error(error);
-          setError(error.response.data.error);
-        }
+  useEffect(() => {
+    if (playerId) {
+      fetchResults();
+    }
+  }, [playerId]);
+
+  const fetchResults = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5005/play/${playerId}/results`
+      );
+      setResultsData(response.data);
+    } catch (error) {
+      if (error.response.data.error === 'Session has not started yet') {
+        navigate('/lobby');
+      } else if (error.response.data.error === 'Session is ongoing, cannot get results yet') {
+        navigate('/play');
+      } else {
+        console.error(error);
+        setError(error.response.data.error);
       }
-    };
-    fetchResults();
-  }, [playerId, navigate]);
+    }
+  };
 
   return (
     <>
@@ -74,3 +75,5 @@ export default function Results({ playerId }) {
     </>
   );
 }
+
+export default Results;
