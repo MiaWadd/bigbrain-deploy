@@ -84,7 +84,7 @@ function Pages() {
         <Route path="/game/:gameId" element={<EditGame />} />
         <Route path="/game/:gameId/question/:questionId" element={<EditQuestion />} />
         <Route path="/lobby" element={<Lobby playerId={playerId} />} />
-        <Route path="/play" element={<Play playerId={playerId} />} />
+        <Route path="/play" element={<Play />} />
         <Route path="/results" element={<Results playerId={playerId} />} />
       </Routes>
     </>

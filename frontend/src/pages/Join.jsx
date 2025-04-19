@@ -16,7 +16,7 @@ function JoinGame({ joinSession }) {
   // If URL already has sessionId, populate it
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const sessionFromURL = params.get('session');
+    const sessionFromURL = params.get('sessionId');
     if (sessionFromURL) {
       setSessionId(sessionFromURL);
     }
