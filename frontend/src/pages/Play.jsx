@@ -30,6 +30,9 @@ function Play() {
   const [correctAnswers, setCorrectAnswers] = useState([]);
   const [endTime, setEndTime] = useState(null);
   const [currQuestion, setCurrQuestion] = useState(null);
+  const [points, setPoints] = useState([]);
+  const [duration, setDuration] = useState([]);
+
 
   const [error, setError] = useState(null);
 
@@ -82,7 +85,6 @@ function Play() {
       // If this is the first question or the question has changed, update variables
       if (!currQuestion || currQuestion.id !== questionData.id) {
         setCurrQuestion(questionData);
-        // setGameHasStarted(true);
         const startTime = new Date(questionData.isoTimeLastQuestionStarted);
         setEndTime(new Date(startTime.getTime() + questionData.duration * 1000));
         setQuestion(questionData.text);
@@ -90,6 +92,8 @@ function Play() {
         setSelectedAnswers([]);
         setCorrectAnswers([]);
         setTimesUp(false);
+        setPoints(prevPoints => [...prevPoints, questionData.points]);
+        setDuration(prevDur => [...prevDur, questionData.duration]);
         if (questionData.type === 'judgement') {
           setAnswers(['True', "False"]);
         } else {
@@ -114,6 +118,8 @@ function Play() {
       // Game has completed
       if (err.response.data.error === "Session ID is not an active session" && gameHasStarted) {
         setGameHasStarted(false);
+        localStorage.setItem('points', points);
+        localStorage.setItem('duration', duration);
         navigate('/results');
       }
       console.log(err); // TODO
@@ -181,47 +187,48 @@ function Play() {
             <>
               {/* <CountdownTimer duration={duration} onExpire={handleTimeUp} /> */}
               {endTime && <CountdownTimer endTime={endTime} onExpire={handleTimeUp} />}
-              {image && (	
-                <img src={image} alt="Image for question" className="mx-auto mt-6 max-w-xl max-h-96"/>
-              )}
-              {video && (	
-                <ReactPlayer 
-                  url={video} 
-                  playing={true} 
-                  loop={true} 
-                  controls={false} 
-                  muted={true}
-                  alt="Image for video" 
-                  className="mx-auto mt-6 max-w-xl max-h-96"
-                />
-              )}
-              <h3 className="mt-5 text-center text-black text-4xl font-bold">{question}</h3>
-              {questionType === QUESTION_TYPES.MULTIPLE_CHOICE && (
-                <p className='text-center'>(Select Multiple)</p>
-              )}
-              <div className="mt-6 flex flex-col gap-4 items-center">
-                {answers.map((answer, index) => {
-                  const isSelected = selectedAnswers.includes(index);
-                  const isCorrect = correctAnswers.includes(index);
-                  let baseStyle = "text-white text-lg font-semibold px-6 py-3 rounded-xl shadow-md transition-all duration-200 w-3/4 max-w-xl";
-                  let bgColor = "bg-blue-600 hover:bg-blue-700";
-                  if (timesUp && isCorrect) {
-                    bgColor = "bg-green-600";
-                  } else if (isSelected) {
-                    bgColor = "bg-blue-800";
-                  }
-
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => !timesUp && handleAnswerClick(index)}
-                      className={`${bgColor} ${baseStyle}`}
-                      disabled={timesUp}
-                    >
-                      {answer}
-                    </button>
-                  );
-                })}
+              <div className="pt-30">
+                {image && (	
+                  <img src={image} alt="Image for question" className="mx-auto mt-6 max-w-xl max-h-96"/>
+                )}
+                {video && (	
+                  <ReactPlayer 
+                    url={video} 
+                    playing={true} 
+                    loop={true} 
+                    controls={false} 
+                    muted={true}
+                    alt="Image for video" 
+                    className="mx-auto mt-6 max-w-xl max-h-96"
+                  />
+                )}
+                <h3 className="mt-5 text-center text-black text-4xl font-bold">{question}</h3>
+                {questionType === QUESTION_TYPES.MULTIPLE_CHOICE && (
+                  <p className='text-center'>(Select Multiple)</p>
+                )}
+                <div className="mt-6 flex flex-col gap-4 items-center">
+                  {answers.map((answer, index) => {
+                    const isSelected = selectedAnswers.includes(index);
+                    const isCorrect = correctAnswers.includes(index);
+                    let baseStyle = "text-white text-lg font-semibold px-6 py-3 rounded-xl shadow-md transition-all duration-200 w-3/4 max-w-xl";
+                    let bgColor = "bg-blue-600 hover:bg-blue-700";
+                    if (timesUp && isCorrect) {
+                      bgColor = "bg-green-600";
+                    } else if (isSelected) {
+                      bgColor = "bg-blue-800";
+                    }
+                    return (
+                      <button
+                        key={index}
+                        onClick={() => !timesUp && handleAnswerClick(index)}
+                        className={`${bgColor} ${baseStyle}`}
+                        disabled={timesUp}
+                      >
+                        {answer}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             </>
           ) : (
