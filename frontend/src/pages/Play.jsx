@@ -4,9 +4,11 @@ import ReactPlayer from 'react-player';
 import axios from 'axios';
 
 // ÷BUGS :
-// Timer does not reset on nect question
+// Timer does not reset on nect question FIXED
 // answer selection does not save on refresh
 // Answers not yet availble o refesh
+// Answering question is faulty
+// Single choice giving three options but only 2 answers...TODO
 
 const QUESTION_TYPES = {
   SINGLE_CHOICE: 'single-choice',
@@ -17,32 +19,46 @@ const QUESTION_TYPES = {
 function CountdownTimer({ endTime, onExpire }) {
   const calculateSecondsLeft = () => Math.max(0, Math.floor((new Date(endTime) - new Date()) / 1000));
   const [secondsLeft, setSecondsLeft] = useState(calculateSecondsLeft());
+  const [hasExpired, setHasExpired] = useState(false);
+
+  // Reset the countdown when the question changes
+  useEffect(() => {
+    setSecondsLeft(calculateSecondsLeft());
+    setHasExpired(false);
+  }, [endTime]);
 
   useEffect(() => {
+    if (hasExpired) return;
+    // Handle Time up when countdown ends
     if (secondsLeft <= 0) {
-      if (onExpire) onExpire();
+      setHasExpired(true);
+      onExpire();
       return;
     }
-
+    // Update count every second
     const interval = setInterval(() => {
       const updated = calculateSecondsLeft();
       setSecondsLeft(updated);
       if (updated <= 0) {
+        setHasExpired(true);
         clearInterval(interval);
-        if (onExpire) onExpire();
+        onExpire();
       }
     }, 1000);
-
     return () => clearInterval(interval);
-  }, [endTime, onExpire]);
+  }, [secondsLeft, endTime, onExpire, hasExpired]);
 
   return (
     <div className="absolute top-20 right-4 px-6 py-3 text-black text-8xl font-extrabold z-50">
-      {/* If secionod left <= 3 make it red */}
-      {secondsLeft}
+      {secondsLeft <= 3 ? (
+        <span className="text-red-600">{secondsLeft}</span>
+      ) : (
+        secondsLeft
+      )}
     </div>
   );
 }
+
 
 
 function Play() {
@@ -51,7 +67,6 @@ function Play() {
   const [playerId, setPlayerId] = useState('');
   const [gameHasStarted, setGameHasStarted] = useState(false);
   // Question variables
-  const [duration, setDuration] = useState('');
   const [image, setImage] = useState('');
   const [video, setVideo] = useState('');
   const [answers, setAnswers] = useState([]);
@@ -67,57 +82,53 @@ function Play() {
   // If no playerId, redirect to join game
   useEffect(() => {
     if (!localStorage.getItem('playerId')) {
-      console.log("no playerID");
       navigate('/join');
     } else {
       setPlayerId(localStorage.getItem('playerId'));
     }
   }, [navigate]); 
 
+  // Inital game load
   useEffect(() => {
     if (playerId) {
-      currState();
+      loadGame();
     }
   }, [playerId]);
 
-  useEffect(() => {
-    if (!playerId || !gameHasStarted) return;
-  
-    const interval = setInterval(() => {
-      fetchQuestion();
-    }, 1000);
-  
-    return () => clearInterval(interval);
-  }, [playerId, gameHasStarted, currQuestion]);
-
-  const currState = async () => {
+  const loadGame = async () => {
     try {
       const response = await axios.get(`http://localhost:5005/play/${playerId}/status`);
       if (response.data.started) {
-        await fetchQuestion();
+        setGameHasStarted(true);
+        await loadQuestion();
       } else {
-        console.log("Game has not started yet");
         setGameHasStarted(false);
         navigate('/lobby');
       }
     } catch (err) {
-      console.log(err);
       navigate('/join');
     }
   };
+
+  // Load question every sesond to determine if the game has progressed
+  useEffect(() => {
+    if (!playerId || !gameHasStarted) return;
+    const interval = setInterval(() => {
+      loadQuestion();
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [playerId, gameHasStarted, currQuestion]);
   
-  const fetchQuestion = async () => {
+  const loadQuestion = async () => {
     try {
       const response = await axios.get(`http://localhost:5005/play/${playerId}/question`);
       const questionData = response.data.question;
+      // If this is the first question or the question has changed, update variables
       if (!currQuestion || currQuestion.id !== questionData.id) {
         setCurrQuestion(questionData);
-        setGameHasStarted(true);
-        const durationSeconds = questionData.duration;
+        // setGameHasStarted(true);
         const startTime = new Date(questionData.isoTimeLastQuestionStarted);
-        const endTime = new Date(startTime.getTime() + durationSeconds * 1000);
-        setEndTime(endTime);
-        setDuration(durationSeconds);
+        setEndTime(new Date(startTime.getTime() + questionData.duration * 1000));
         setQuestion(questionData.text);
         setQuestionType(questionData.type);
         setSelectedAnswers([]);
@@ -128,6 +139,8 @@ function Play() {
         } else {
           setAnswers(questionData.answers);
         }
+        console.log(questionData.type);
+        console.log(answers);
         if (questionData.media.type === 'image') {
           setImage(questionData.media.url);
           setVideo('');
@@ -140,8 +153,8 @@ function Play() {
         }
       }
     } catch (err) {
-      console.log(err);
-      if (err.response?.data?.error === "Session has not started yet") {
+      console.log(err); // TODO
+      if (err.response.data.error === "Session has not started yet") {
         setGameHasStarted(false);
         navigate('/lobby');
       }
@@ -181,6 +194,9 @@ function Play() {
       }
     }
     setSelectedAnswers(updatedSelection);
+    console.log("new answer submitted:");
+    console.log(updatedSelection);
+
     try {
       await axios.put(`http://localhost:5005/play/${playerId}/answer`, {
         answers: updatedSelection,
