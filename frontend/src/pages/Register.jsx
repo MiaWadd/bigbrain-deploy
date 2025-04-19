@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate, Link, useEffect } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import NavBar from '../components/Navbar';
 
 const BACKEND_PORT = 5005;
