@@ -105,6 +105,7 @@ function Play() {
         navigate('/lobby');
       }
     } catch (err) {
+      console.log(err);
       navigate('/join');
     }
   };
@@ -138,8 +139,6 @@ function Play() {
         } else {
           setAnswers(questionData.answers);
         }
-        console.log(questionData.type);
-        console.log(answers);
         if (questionData.media.type === 'image') {
           setImage(questionData.media.url);
           setVideo('');
@@ -152,7 +151,6 @@ function Play() {
         }
       }
     } catch (err) {
-      console.log(err); // TODO
       if (err.response.data.error === "Session has not started yet") {
         setGameHasStarted(false);
         navigate('/lobby');
@@ -162,23 +160,22 @@ function Play() {
         setGameHasStarted(false);
         navigate('/results');
       }
+      console.log(err); // TODO
     }
   };
   
 
   const handleTimeUp = async () => {
     setError(null);
-    console.log("Time's up! Locking in answer / showing result.");
     setTimesUp(true);
     setTimeout(async () => {
-    try {
-      const response = await axios.get(`http://localhost:5005/play/${playerId}/answer`);
-      console.log(response.data.answerIds);
-      setCorrectAnswers(response.data.answerIds);
-    } catch (error) {
-      console.log(error);
-    }
-  }, 2000);
+      try {
+        const response = await axios.get(`http://localhost:5005/play/${playerId}/answer`);
+        setCorrectAnswers(response.data.answerIds);
+      } catch (error) {
+        console.log(error);
+      }
+    }, 1000);
   };
 
   const handleAnswerClick = async (selectedAnswer) => {
@@ -203,8 +200,6 @@ function Play() {
       setError('Must select at least one answer');
     } else {
       setSelectedAnswers(updatedSelection);
-      console.log("new answer submitted:");
-      console.log(updatedSelection);
       try {
         await axios.put(`http://localhost:5005/play/${playerId}/answer`, {
           answers: updatedSelection,
@@ -220,10 +215,10 @@ function Play() {
   return (
     <>
       {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-600">{error}</p>
-          </div>
-        )}
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600">{error}</p>
+        </div>
+      )}
       {playerId && (
         <>
           {gameHasStarted ? (

@@ -22,26 +22,23 @@ function Results() {
     }
   }, [playerId]);
 
-    const fetchResults = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:5005/play/${playerId}/results`
-        );
-        console.log(response.data);
-        setResultsData(response.data);
-      } catch (error) {
-        if (error.response.data.error === 'Session has not started yet') {
-          console.log('Redirect to lobby');
-          navigate('/lobby');
-        } else if (error.response.data.error === 'Session is ongoing, cannot get results yet') {
-          console.log('Redirect to play');
-          navigate('/play');
-        } else {
-          console.error(error);
-          setError(error.response.data.error);
-        }
+  const fetchResults = async () => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5005/play/${playerId}/results`
+      );
+      setResultsData(response.data);
+    } catch (error) {
+      if (error.response.data.error === 'Session has not started yet') {
+        navigate('/lobby');
+      } else if (error.response.data.error === 'Session is ongoing, cannot get results yet') {
+        navigate('/play');
+      } else {
+        console.error(error);
+        setError(error.response.data.error);
       }
-    };
+    }
+  };
 
   return (
     <>

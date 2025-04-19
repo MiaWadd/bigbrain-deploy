@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useEffect } from 'react-router-dom';
 import NavBar from '../components/Navbar';
 
 const BACKEND_PORT = 5005;
@@ -13,6 +13,12 @@ function Register({ updateToken, token }) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (token) {
+      navigate('/dashboard');
+    }
+  }, [token, navigate]);
 
   const register = async (e) => {
     e.preventDefault();

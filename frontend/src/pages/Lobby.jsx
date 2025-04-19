@@ -15,7 +15,7 @@ const quotes = [
   "Please give us good marks...",
 ];
 
-export default function Lobby({ playerId }) {
+export default function Lobby() {
   const navigate = useNavigate();
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [error, setError] = useState(null);
@@ -32,7 +32,7 @@ export default function Lobby({ playerId }) {
   useEffect(() => {
     const interval = setInterval(() => {
       setQuoteIndex((prev) => (prev + 1) % quotes.length);
-    }, 3000);
+    }, 1000);
     return () => clearInterval(interval);
   }, []);
 
