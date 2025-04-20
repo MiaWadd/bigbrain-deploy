@@ -36,8 +36,11 @@ export default function SessionControl({ token }) {
         return game.id;
       } else {
         const game = response.data.games.find(g => (g.oldSessions.includes(Number(sessionId))));
-        console.log('Found game:', game); // Debug log
-        if (!game) {
+        if (game) {
+          console.log('Found game:', game); // Debug log
+          setGameId(game.id);
+          return game.id;
+        } else {
           throw new Error('Could not find game associated with this session');
         }
       }
