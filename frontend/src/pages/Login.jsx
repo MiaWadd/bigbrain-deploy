@@ -41,8 +41,6 @@ function Login({ updateToken, token }) {
       console.error('Login error:', err);
       if (err.response?.data?.error) {
         setError(err.response.data.error);
-      } else if (err.response?.status === 400) {
-        setError('Invalid email or password');
       } else {
         setError('Failed to login. Please try again.');
       }
