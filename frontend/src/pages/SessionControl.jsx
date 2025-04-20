@@ -29,15 +29,17 @@ export default function SessionControl({ token }) {
       // Find the game that has this active session
       // Convert sessionId to string for comparison since URL params are strings
       const game = response.data.games.find(g => String(g.active) === String(sessionId));
-      
+
       if (game) {
         console.log('Found game:', game); // Debug log
         setGameId(game.id);
         return game.id;
       } else {
-        console.log('Available games:', response.data.games); // Debug log
-        console.log('Looking for session:', sessionId); // Debug log
-        throw new Error('Could not find game associated with this session');
+        const game = response.data.games.find(g => (g.oldSessions.includes(Number(sessionId))));
+        console.log('Found game:', game); // Debug log
+        if (!game) {
+          throw new Error('Could not find game associated with this session');
+        }
       }
     } catch (err) {
       console.error('Error fetching game ID:', err);
