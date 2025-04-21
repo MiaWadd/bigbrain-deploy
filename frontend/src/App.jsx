@@ -10,6 +10,8 @@ import Lobby from './pages/Lobby';
 import SessionControl from './pages/SessionControl';
 import Play from './pages/Play';
 import Results from './pages/Results';
+import SessionResults from './pages/SessionResults';
+
 
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'));
@@ -81,7 +83,17 @@ function App() {
           path="/session/:sessionId" 
           element={
             token ? (
-              <SessionControl token={token} />
+              <SessionControl token={token} updateToken={updateToken} />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          } 
+        />
+        <Route 
+          path="/session/:sessionId/results" 
+          element={
+            token ? (
+              <SessionResults token={token} updateToken={updateToken} />
             ) : (
               <Navigate to="/login" replace />
             )

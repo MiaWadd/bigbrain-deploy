@@ -124,10 +124,15 @@ function GameCard({ game, onDelete }) {
     }
   };
 
-  // Handle viewing results
+  // Navigate to view results for the most recent ended session
   const handleViewResults = () => {
-    setShowStopPopup(false);
-    navigate(`/results/${game.id}`); // This route will be implemented later
+    if (game.oldSessions && game.oldSessions.length > 0) {
+      const latestSessionId = game.oldSessions[game.oldSessions.length - 1];
+      navigate(`/session/${latestSessionId}/results`);
+    } else {
+      console.error('Could not determine session ID for results viewing.', game);
+      // Optionally, show an error to the user
+    }
   };
 
   // Check session status on mount and when sessionId changes
