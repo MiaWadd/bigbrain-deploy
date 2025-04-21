@@ -47,7 +47,7 @@ describe('Happy Path of an Admin', () => {
 
     });
   
-    it('Starts and ends the game', () => {
+    it('Starts and ends a game', () => {
       cy.visit('/dashboard');
       cy.contains('button', 'Start Game').click();
         // ÷TODO Session id and url populated
