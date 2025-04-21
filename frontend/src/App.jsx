@@ -11,6 +11,7 @@ import SessionControl from './pages/SessionControl';
 import Play from './pages/Play';
 import Results from './pages/Results';
 import SessionResults from './pages/SessionResults';
+import PastSessions from './pages/PastSessions';
 
 
 function App() {
@@ -70,6 +71,16 @@ function App() {
           element={
             token ? (
               <EditQuestion token={token} />
+            ) : (
+              <Navigate to="/login" replace />
+            )
+          } 
+        />
+        <Route 
+          path="/game/:gameId/sessions" 
+          element={
+            token ? (
+              <PastSessions token={token} updateToken={updateToken} />
             ) : (
               <Navigate to="/login" replace />
             )
