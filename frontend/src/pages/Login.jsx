@@ -33,6 +33,7 @@ function Login({ updateToken, token }) {
       // Check if we have a valid response with token
       if (response?.data?.token) {
         updateToken(response.data.token);
+        localStorage.setItem('email', email);
         navigate('/dashboard');
       } else {
         throw new Error('Invalid response from server');
