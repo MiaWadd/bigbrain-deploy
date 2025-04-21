@@ -38,10 +38,24 @@ const processApiResults = (apiData) => {
 
   // 1. Calculate Player Scores
   const playersWithScores = apiData.map(player => {
-    const score = player.answers.reduce((acc, answer) => acc + (answer.correct ? 1 : 0), 0);
-    // Assuming score is just the count of correct answers for now.
-    // This could be enhanced later if questions have point values.
-    return { ...player, score }; 
+    const points = localStorage.getItem('points')?.split(',').map(p => Number(p)) || [];
+    const durations = localStorage.getItem('duration')?.split(',').map(p => Number(p)) || [];
+    
+    const score = player.answers.reduce((acc, answer, index) => {
+      if (!answer.correct) return acc;
+      
+      const start = new Date(answer.questionStartedAt);
+      const end = new Date(answer.answeredAt);
+      const timeTaken = ((end - start) / 1000);
+      
+      const basePoints = points[index] || 1000; // Default to 1000 if not found
+      const duration = durations[index] || 20; // Default to 20 seconds if not found
+      
+      const adjustedPoints = ((1 - ((timeTaken / duration) / 2)) * basePoints);
+      return acc + adjustedPoints;
+    }, 0);
+
+    return { ...player, score: parseFloat(score.toFixed(2)) }; 
   });
 
   // 2. Calculate Question Results (Correct % and Avg Time)
