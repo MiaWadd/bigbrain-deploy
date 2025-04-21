@@ -18,23 +18,24 @@ function EditQuestion() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
+  const [game, setGame] = useState(null);
 
-  // Question state
+  // Question state with proper initialization
   const [questionData, setQuestionData] = useState({
     text: '',
     type: QUESTION_TYPES.SINGLE_CHOICE,
     timeLimit: 30,
     points: 5,
-    answers: ['', ''], // Start with 2 empty answers
-    correctAnswers: [], // Indices of correct answers
+    answers: ['', ''],
+    correctAnswers: [],
     media: {
-      type: null, // 'youtube' or 'image'
+      type: null,
       url: '',
     },
   });
 
   // Fetch game and question data
-  const fetchQuestion = async () => {
+  const fetchGame = async () => {
     const token = localStorage.getItem('token');
     if (!token) {
       setError('Authentication token not found. Please log in.');
@@ -49,32 +50,51 @@ function EditQuestion() {
         }
       });
 
-      if (response.data && Array.isArray(response.data.games)) {
-        const game = response.data.games.find(g => String(g.id) === String(gameId));
-        if (!game) {
-          setError('Game not found');
-          return;
-        }
-
-        const question = game.questions.find(q => String(q.id) === String(questionId));
-        if (!question) {
-          setError('Question not found');
-          return;
-        }
-
-        // Initialize state with existing question data
-        setQuestionData({
-          text: question.text || '',
-          type: question.type || QUESTION_TYPES.SINGLE_CHOICE,
-          timeLimit: question.timeLimit || question.duration || 30,
-          points: question.points || 5,
-          answers: question.answers || ['', ''],
-          correctAnswers: question.correctAnswers || [],
-          media: question.media || { type: null, url: '' },
-        });
+      if (!response.data || !Array.isArray(response.data.games)) {
+        setError('Invalid response format from server');
+        setLoading(false);
+        return;
       }
+
+      const game = response.data.games.find(g => String(g.id) === String(gameId));
+      if (!game) {
+        setError('Game not found');
+        setLoading(false);
+        return;
+      }
+
+      // Ensure questions have consistent ID format
+      const questionsWithIds = game.questions.map((q, index) => ({
+        ...q,
+        id: q.id || `q${index + 1}`
+      }));
+      game.questions = questionsWithIds;
+
+      // Find the question using string comparison
+      const question = game.questions.find(q => String(q.id) === String(questionId));
+      if (!question) {
+        setError('Question not found');
+        setLoading(false);
+        return;
+      }
+
+      // Ensure all required fields are present in the question data
+      const processedQuestion = {
+        text: question.text || '',
+        type: question.type || QUESTION_TYPES.SINGLE_CHOICE,
+        timeLimit: question.timeLimit || question.duration || 30,
+        points: question.points || 5,
+        answers: question.answers || ['', ''],
+        correctAnswers: question.correctAnswers || [],
+        media: question.media || { type: null, url: '' },
+      };
+
+      setGame(game);
+      setQuestionData(processedQuestion);
+      setError(null);
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to fetch question');
+      console.error('Error fetching game:', err);
+      setError(err.response?.data?.error || 'Failed to fetch game. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -225,11 +245,25 @@ function EditQuestion() {
   };
 
   useEffect(() => {
-    fetchQuestion();
+    fetchGame();
   }, [gameId, questionId]);
 
   if (loading) {
     return <div className="p-8 text-center">Loading question...</div>;
+  }
+
+  if (error) {
+    return (
+      <div className="p-8 text-center">
+        <div className="text-red-600 mb-4">{error}</div>
+        <button
+          onClick={() => navigate(`/game/${gameId}`)}
+          className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
+        >
+          Back to Game
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -244,12 +278,6 @@ function EditQuestion() {
         </button>
         <h1 className="text-2xl font-semibold text-gray-900">Edit Question</h1>
       </div>
-
-      {error && (
-        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
-          <p className="text-red-600">{error}</p>
-        </div>
-      )}
 
       <div className="space-y-6 max-w-3xl">
         {/* Question Type */}
