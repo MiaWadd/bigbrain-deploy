@@ -36,10 +36,16 @@ function EditGame() {
       if (response.data && Array.isArray(response.data.games)) {
         const foundGame = response.data.games.find(g => String(g.id) === String(gameId));
         if (foundGame) {
-          setGame(foundGame);
+          // Preserve existing IDs or generate new ones if missing
+          const questionsWithIds = (foundGame.questions || []).map((q, index) => ({
+            ...q,
+            id: q.id || `q${index + 1}` // Use string IDs with 'q' prefix for consistency
+          }));
+          
+          setGame({ ...foundGame, questions: questionsWithIds });
           setNewName(foundGame.name);
           setThumbnail(foundGame.thumbnail || '');
-          setQuestions(foundGame.questions || []);
+          setQuestions(questionsWithIds);
         } else {
           setError('Game not found');
         }
@@ -84,8 +90,16 @@ function EditGame() {
           }
         );
 
-        // Update local state
-        setGame(prev => ({ ...prev, ...updatedData }));
+        // Update local state with individual fields
+        if (updatedData.name) setNewName(updatedData.name);
+        if (updatedData.thumbnail) setThumbnail(updatedData.thumbnail);
+        if (updatedData.questions) setQuestions(updatedData.questions);
+        
+        // Update the game object properly
+        setGame(prev => {
+          if (!prev) return null;
+          return { ...prev, ...updatedData };
+        });
         setError(null);
       }
     } catch (err) {
@@ -116,8 +130,14 @@ function EditGame() {
 
   // Handle adding a new question
   const handleAddQuestion = async () => {
+    // Generate new ID with 'q' prefix
+    const maxId = questions.reduce((max, q) => {
+      const num = parseInt(q.id?.replace('q', '') || '0');
+      return Math.max(max, isNaN(num) ? 0 : num);
+    }, 0);
+    
     const newQuestion = {
-      id: Date.now(), // Temporary ID
+      id: `q${maxId + 1}`,
       text: 'New Question',
       duration: 30,
       points: 5,
@@ -204,7 +224,7 @@ function EditGame() {
               <button
                 onClick={() => {
                   setEditingName(false);
-                  setNewName(game.name);
+                  setNewName(game?.name || '');
                 }}
                 className="px-4 py-2 text-gray-600 hover:text-gray-800"
               >
@@ -213,7 +233,7 @@ function EditGame() {
             </div>
           ) : (
             <div className="flex justify-between items-center">
-              <span className="text-gray-900">{game.name}</span>
+              <span className="text-gray-900">{game?.name || 'Untitled Game'}</span>
               <button
                 onClick={() => setEditingName(true)}
                 className="text-blue-600 hover:text-blue-800"
@@ -274,25 +294,27 @@ function EditGame() {
           <div className="space-y-4">
             {questions.map((question, index) => (
               <div
-                key={question.id}
+                key={question.id || `question-${index}`}
                 className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
               >
                 <div>
                   <h3 className="font-medium text-gray-900">
-                    Question {index + 1}: {question.text}
+                    Question {index + 1}: {question.text || 'Untitled Question'}
                   </h3>
                   <p className="text-sm text-gray-500">
-                    Duration: {question.duration}s | Points: {question.points}
+                    Duration: {question.duration || 0}s | Points: {question.points || 0}
                   </p>
                 </div>
                 <div className="flex gap-2">
                   <button
+                    key={`edit-${question.id || index}`}
                     onClick={() => navigate(`/game/${gameId}/question/${question.id}`)}
                     className="px-3 py-1 text-blue-600 hover:text-blue-800"
                   >
                     Edit
                   </button>
                   <button
+                    key={`delete-${question.id || index}`}
                     onClick={() => handleDeleteQuestion(question.id)}
                     className="px-3 py-1 text-red-600 hover:text-red-800"
                   >
