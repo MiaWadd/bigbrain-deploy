@@ -36,7 +36,12 @@ function Dashboard({ token, updateToken }) {
         }
       });
       if (response.data && Array.isArray(response.data.games)) {
-        const sortedGames = response.data.games.sort((a, b) => a.name.localeCompare(b.name));
+        const sortedGames = response.data.games.sort((a, b) => {
+          // Handle cases where name might be undefined or not a string
+          const nameA = typeof a?.name === 'string' ? a.name.toLowerCase() : '';
+          const nameB = typeof b?.name === 'string' ? b.name.toLowerCase() : '';
+          return nameA.localeCompare(nameB);
+        });
         setGames(sortedGames);
       } else {
         console.error("Unexpected API response structure:", response.data);
@@ -69,7 +74,7 @@ function Dashboard({ token, updateToken }) {
   };
 
   // Function to handle game creation
-  const handleCreateGame = async (gameName) => {
+  const handleCreateGame = async (gameData) => {
     const token = localStorage.getItem('token');
     if (!token) {
       setError('Authentication token not found. Please log in.');
@@ -77,9 +82,8 @@ function Dashboard({ token, updateToken }) {
     }
 
     try {
-      const ownerEmail = localStorage.getItem('email');
-      // const ownerEmail = games.length > 0 ? games[0].owner : null;
-      console.log(ownerEmail);
+      const ownerEmail = games.length > 0 ? games[0].owner : null;
+      
       if (!ownerEmail) {
         setError('Could not determine game owner. Please try refreshing the page.');
         return;
@@ -87,9 +91,9 @@ function Dashboard({ token, updateToken }) {
 
       const newGame = {
         id: generateGameId(),
-        name: gameName,
-        questions: [],
-        thumbnail: "",
+        name: gameData.name,
+        questions: gameData.questions || [],
+        thumbnail: gameData.thumbnail || "",
         owner: ownerEmail,
         active: false,
         createdAt: new Date().toISOString(),
@@ -97,7 +101,7 @@ function Dashboard({ token, updateToken }) {
 
       const updatedGames = [...games, newGame];
 
-      const response = await axios.put(
+      await axios.put(
         `${API_URL}/admin/games`,
         { games: updatedGames },
         {
@@ -107,6 +111,7 @@ function Dashboard({ token, updateToken }) {
           },
         }
       );
+
       setGames(updatedGames);
       setIsCreateModalOpen(false);
     } catch (err) {
