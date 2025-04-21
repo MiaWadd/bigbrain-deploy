@@ -225,6 +225,15 @@ function GameCard({ game, onDelete }) {
           >
             Delete
           </button>
+
+          {game.oldSessions && game.oldSessions.length > 0 && (
+            <button
+              onClick={() => navigate(`/game/${game.id}/sessions`)}
+              className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            >
+              Past Sessions ({game.oldSessions.length})
+            </button>
+          )}
         </div>
 
         {showSessionPopup && (

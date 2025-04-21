@@ -46,14 +46,6 @@ function Play() {
     }
   }, [navigate]); 
 
-  // Restore points and duration upon refresh
-  useEffect(() => {
-    const savedPoints = JSON.parse(localStorage.getItem('points') || '[]');
-    const savedDuration = JSON.parse(localStorage.getItem('duration') || '[]');
-    setPoints(savedPoints);
-    setDuration(savedDuration);
-  }, []);
-
   // Inital game load
   useEffect(() => {
     if (playerId) {
@@ -73,17 +65,7 @@ function Play() {
       }
     } catch (err) {
       console.log(err);
-      console.log(playerId, err.response.data.error );
-      console.log(err.response.data.error === "Session ID is not an active session");
-      if (playerId && err.response.data.error === "Session ID is not an active session") {
-        // Game is complete
-        setGameHasStarted(false);
-        localStorage.setItem('points', points);
-        localStorage.setItem('duration', duration);
-        navigate('/results');
-      } else {
-        navigate('/join');
-      }
+      navigate('/join');
     }
   };
 
@@ -110,8 +92,8 @@ function Play() {
         setSelectedAnswers([]);
         setCorrectAnswers([]);
         setTimesUp(false);
-        // setPoints(prevPoints => [...prevPoints, questionData.points]);
-        // setDuration(prevDur => [...prevDur, questionData.duration]);
+        setPoints(prevPoints => [...prevPoints, questionData.points]);
+        setDuration(prevDur => [...prevDur, questionData.duration]);
         if (questionData.type === 'judgement') {
           setAnswers(['True', "False"]);
         } else {
@@ -127,12 +109,6 @@ function Play() {
           setImage('');
           setVideo('');
         }
-        const updatedPoints = [...points, questionData.points];
-        const updatedDuration = [...duration, questionData.duration];
-        setPoints(updatedPoints);
-        setDuration(updatedPoints);
-        localStorage.setItem('points', JSON.stringify(updatedPoints));
-        localStorage.setItem('duration', JSON.stringify(updatedDuration));
       }
     } catch (err) {
       if (err.response.data.error === "Session has not started yet") {
@@ -142,8 +118,8 @@ function Play() {
       // Game has completed
       if (err.response.data.error === "Session ID is not an active session" && gameHasStarted) {
         setGameHasStarted(false);
-        // localStorage.setItem('points', points);
-        // localStorage.setItem('duration', duration);
+        localStorage.setItem('points', points);
+        localStorage.setItem('duration', duration);
         navigate('/results');
       }
       console.log(err); // TODO
