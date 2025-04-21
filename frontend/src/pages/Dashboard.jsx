@@ -77,8 +77,9 @@ function Dashboard({ token, updateToken }) {
     }
 
     try {
-      const ownerEmail = games.length > 0 ? games[0].owner : null;
-      
+      const ownerEmail = localStorage.getItem('email');
+      // const ownerEmail = games.length > 0 ? games[0].owner : null;
+      console.log(ownerEmail);
       if (!ownerEmail) {
         setError('Could not determine game owner. Please try refreshing the page.');
         return;
@@ -96,7 +97,7 @@ function Dashboard({ token, updateToken }) {
 
       const updatedGames = [...games, newGame];
 
-      await axios.put(
+      const response = await axios.put(
         `${API_URL}/admin/games`,
         { games: updatedGames },
         {
@@ -106,7 +107,6 @@ function Dashboard({ token, updateToken }) {
           },
         }
       );
-
       setGames(updatedGames);
       setIsCreateModalOpen(false);
     } catch (err) {

@@ -9,6 +9,7 @@ const API_URL = `http://localhost:${BACKEND_PORT}`;
 function Register({ updateToken, token }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [name, setName] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -24,33 +25,37 @@ function Register({ updateToken, token }) {
     e.preventDefault();
     setError(null);
     setLoading(true);
+    if (password !== confirmPassword) {
+      setError("Passwords do not match");
+    } else {
+      try {
+        const response = await axios.post(`${API_URL}/admin/auth/register`, {
+          email: email,
+          password: password,
+          name: name,
+        });
 
-    try {
-      const response = await axios.post(`${API_URL}/admin/auth/register`, {
-        email: email,
-        password: password,
-        name: name,
-      });
-
-      // Check if we have a valid response with token
-      if (response?.data?.token) {
-        updateToken(response.data.token);
-        navigate('/dashboard');
-      } else {
-        throw new Error('Invalid response from server');
+        // Check if we have a valid response with token
+        if (response?.data?.token) {
+          updateToken(response.data.token);
+          localStorage.setItem('email', email);
+          navigate('/dashboard');
+        } else {
+          throw new Error('Invalid response from server');
+        }
+      } catch (err) {
+        console.error('Register error:', err);
+        if (err.response?.data?.error) {
+          setError(err.response.data.error);
+        } else if (err.response?.status === 400) {
+          setError('Invalid registration details');
+        } else {
+          setError('Failed to register. Please try again.');
+        }
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error('Register error:', err);
-      if (err.response?.data?.error) {
-        setError(err.response.data.error);
-      } else if (err.response?.status === 400) {
-        setError('Invalid registration details');
-      } else {
-        setError('Failed to register. Please try again.');
-      }
-    } finally {
-      setLoading(false);
-    }
+    }   
   };
 
   return (
@@ -96,6 +101,17 @@ function Register({ updateToken, token }) {
                 id='register-password'
                 value={password} 
                 onChange={e => setPassword(e.target.value)}
+                type="password"
+                required
+                className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+              />
+            </div>
+            <div className="max-w-sm mx-auto mt-5">
+              <label htmlFor="register-confirm-password" className="text-md font-normal text-black">Confirm Password</label>
+              <input
+                id='register-confirm-password'
+                value={confirmPassword} 
+                onChange={e => setConfirmPassword(e.target.value)}
                 type="password"
                 required
                 className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
