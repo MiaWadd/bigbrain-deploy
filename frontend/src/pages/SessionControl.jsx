@@ -200,23 +200,34 @@ export default function SessionControl({ token, updateToken }) {
     }
   };
 
-  // Handle viewing results after stopping
-  const handleViewResults = () => {
-    setShowStopPopup(false);
-    navigate(`/results/${gameId}`);
-  };
+ // Handle viewing results after stopping (Kept for potential future use, but stop now navigates directly)
+ const handleViewResults = () => {
+  setShowStopPopup(false);
+  navigate(`/session/${sessionId}/results`);
+};
 
-  if (loading) {
-    return (
+// Logout handler for Navbar
+const handleLogout = () => {
+  updateToken(null);
+  navigate('/login');
+};
+
+if (loading) {
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <Navbar showLogout={true} onLogout={handleLogout} />
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-xl">Loading session...</div>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
-  if (error) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4">
+if (error) {
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <Navbar showLogout={true} onLogout={handleLogout} />
+      <div className="flex flex-col items-center justify-center pt-10 p-4">
         <div className="bg-red-50 border border-red-200 rounded p-4 text-red-700 max-w-md w-full text-center">
           <p className="font-medium">Error</p>
           <p className="text-sm mt-1">{error}</p>
@@ -228,10 +239,13 @@ export default function SessionControl({ token, updateToken }) {
           </button>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
+}
 
-  return (
+return (
+  <div className="min-h-screen bg-gray-100">
+    <Navbar showLogout={true} onLogout={handleLogout} />
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-3xl mx-auto">
         <div className="bg-white rounded-lg shadow-md p-6">
@@ -291,5 +305,6 @@ export default function SessionControl({ token, updateToken }) {
         />
       )}
     </div>
-  );
+  </div>
+);
 } 
