@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import StopGamePopup from '../components/StopGamePopup';
+import Navbar from '../components/Navbar';
 
 const BACKEND_PORT = 5005;
 const API_URL = `http://localhost:${BACKEND_PORT}`;
 
-export default function SessionControl({ token }) {
+export default function SessionControl({ token, updateToken }) {
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(null);
@@ -16,6 +17,7 @@ export default function SessionControl({ token }) {
   const [error, setError] = useState(null);
   const [showStopPopup, setShowStopPopup] = useState(false);
   const [gameId, setGameId] = useState(null);
+  const isMounted = useRef(true);
 
   // Get initial game ID
   const fetchGameId = async () => {
@@ -26,28 +28,30 @@ export default function SessionControl({ token }) {
         }
       });
 
-      // Find the game that has this active session
-      // Convert sessionId to string for comparison since URL params are strings
-      const game = response.data.games.find(g => String(g.active) === String(sessionId));
+      if (!isMounted.current) return null;
+
+      let game = response.data.games.find(g => String(g.active) === String(sessionId));
 
       if (game) {
-        console.log('Found game:', game); // Debug log
-        setGameId(game.id);
+        console.log('Found game (active):', game);
+        if (isMounted.current) setGameId(game.id);
         return game.id;
       } else {
-        const game = response.data.games.find(g => (g.oldSessions.includes(Number(sessionId))));
+        game = response.data.games.find(g => g.oldSessions && g.oldSessions.includes(Number(sessionId)));
         if (game) {
-          console.log('Found game:', game); // Debug log
-          setGameId(game.id);
-          return game.id;
+          console.log('Found game (old session) - Navigating to results.');
+          if (isMounted.current) navigate(`/session/${sessionId}/results`);
+          return null;
         } else {
           throw new Error('Could not find game associated with this session');
         }
       }
     } catch (err) {
       console.error('Error fetching game ID:', err);
-      console.error('Full error details:', err.response || err); // Debug log
-      setError(err.response?.data?.error || 'Failed to find associated game');
+      console.error('Full error details:', err.response || err);
+      if (isMounted.current) {
+        setError(err.response?.data?.error || 'Failed to find associated game');
+      }
       return null;
     }
   };
@@ -55,14 +59,9 @@ export default function SessionControl({ token }) {
   // Fetch current question status
   const fetchStatus = async () => {
     try {
-      // If we don't have a game ID yet, try to fetch it
       if (!gameId) {
-        const fetchedGameId = await fetchGameId();
-        if (!fetchedGameId) {
-          setError('Could not find game associated with this session');
-          setLoading(false);
-          return;
-        }
+        if (isMounted.current) setLoading(false);
+        return;
       }
 
       const response = await axios.get(`${API_URL}/admin/session/${sessionId}/status`, {
@@ -71,42 +70,72 @@ export default function SessionControl({ token }) {
         }
       });
 
-      setCurrentQuestion(response.data.question);
-      setTimeLeft(response.data.timeLeft);
-      setLoading(false);
+      if (isMounted.current) {
+        setCurrentQuestion(response.data.question);
+        setTimeLeft(response.data.timeLeft);
+        setLoading(false);
+      }
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to fetch session status');
-      setLoading(false);
+      console.error('Error fetching status:', err);
+      if (isMounted.current) {
+        if (err.response?.status === 400) {
+          console.log('Session status returned 400, navigating to results.');
+          navigate(`/session/${sessionId}/results`);
+        } else {
+          setError(err.response?.data?.error || 'Failed to fetch session status');
+          setLoading(false);
+        }
+      }
     }
   };
 
   // Initial setup
   useEffect(() => {
-    if (!sessionId || !token) return;
+    isMounted.current = true;
+    let intervalId = null;
 
     const setup = async () => {
-      // First get the game ID
+      if (!sessionId || !token) {
+        if (isMounted.current) setLoading(false);
+        return;
+      }
+      
+      if (!isMounted.current) return;
+      
       const fetchedGameId = await fetchGameId();
-      if (fetchedGameId) {
-        // Then start polling for status
-        fetchStatus();
-        const interval = setInterval(fetchStatus, 1000);
-        return () => clearInterval(interval);
+      
+      if (!isMounted.current || !fetchedGameId) {
+        if (isMounted.current && !fetchedGameId && error === null) {
+            setLoading(false);
+        }
+        return;
+      }
+
+      await fetchStatus();
+      if (isMounted.current) {
+          intervalId = setInterval(fetchStatus, 1000);
       }
     };
 
     setup();
+
+    return () => {
+      console.log("SessionControl unmounting, clearing interval.");
+      isMounted.current = false;
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
   }, [sessionId, token]);
 
   // Advance to next question
   const handleAdvance = async () => {
     if (!gameId) {
-      setError('Game ID not available. Please try refreshing the page.');
+      if (isMounted.current) setError('Game ID not available.');
       return;
     }
-
-    setActionLoading(true);
-    setError(null);
+    if (isMounted.current) setActionLoading(true);
+    if (isMounted.current) setError(null);
     try {
       const token = localStorage.getItem('token');
       await axios.post(
@@ -119,23 +148,30 @@ export default function SessionControl({ token }) {
           }
         }
       );
-      await fetchStatus(); // Refresh status after advancing
+      await fetchStatus();
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to advance question');
+      console.error('Error advancing question:', err);
+      if (isMounted.current) {
+        if (err.response?.status === 400) {
+          console.log('Advance mutation returned 400, navigating to results.');
+          navigate(`/session/${sessionId}/results`);
+        } else {
+          setError(err.response?.data?.error || 'Failed to advance question');
+        }
+      }
     } finally {
-      setActionLoading(false);
+      if (isMounted.current) setActionLoading(false);
     }
   };
 
   // Stop the session
   const handleStop = async () => {
     if (!gameId) {
-      setError('Game ID not available. Please try refreshing the page.');
+      if (isMounted.current) setError('Game ID not available.');
       return;
     }
-
-    setActionLoading(true);
-    setError(null);
+    if (isMounted.current) setActionLoading(true);
+    if (isMounted.current) setError(null);
     try {
       const token = localStorage.getItem('token');
       await axios.post(
@@ -148,11 +184,19 @@ export default function SessionControl({ token }) {
           }
         }
       );
-      setShowStopPopup(true);
+      if (isMounted.current) navigate(`/session/${sessionId}/results`);
     } catch (err) {
-      setError(err.response?.data?.error || 'Failed to stop session');
+      console.error('Error stopping session:', err);
+      if (isMounted.current) {
+        if (err.response?.status === 400) {
+          console.log('Stop mutation returned 400, navigating to results.');
+          navigate(`/session/${sessionId}/results`);
+        } else {
+          setError(err.response?.data?.error || 'Failed to stop session');
+        }
+      }
     } finally {
-      setActionLoading(false);
+      if (isMounted.current) setActionLoading(false);
     }
   };
 
