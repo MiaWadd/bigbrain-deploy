@@ -82,8 +82,9 @@ function Dashboard({ token, updateToken }) {
     }
 
     try {
-      const ownerEmail = games.length > 0 ? games[0].owner : null;
-      
+
+      // const ownerEmail = games.length > 0 ? games[0].owner : null;
+      const ownerEmail = localStorage.getItem('email');
       if (!ownerEmail) {
         setError('Could not determine game owner. Please try refreshing the page.');
         return;

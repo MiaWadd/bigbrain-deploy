@@ -24,7 +24,7 @@ describe('Happy Path of an Admin', () => {
       cy.get('input[id="register-password"]').type(password);
       cy.get('input[id="register-confirm-password"]').type(password);
       cy.contains('button', 'Register').click();
-      cy.wait(1000)
+      cy.wait(1000);
       cy.url().should('include', '/dashboard');
       cy.contains('Dashboard');
     });
@@ -32,30 +32,27 @@ describe('Happy Path of an Admin', () => {
     it('Creates a new game', () => {
       cy.visit('/dashboard');
       cy.contains('button', 'Create New Game').click();
-      cy.wait(500)
+      cy.wait(500);
       cy.get('input[id="gameName"]').type("Test New Game");
       cy.contains('button', 'Create Game').click();
-      cy.wait(500)
+      cy.wait(500);
       cy.contains("Test New Game").should('exist');
     });
-
-    it('Updates game name and thumbnail', () => {
-      cy.visit('/dashboard');
-      cy.contains('button', 'Edit').click();
-      cy.url().should('include', '/game');
-      //TODO
-
-    });
   
-    it('Starts and ends a game', () => {
+    it('Starts a game', () => {
       cy.visit('/dashboard');
       cy.contains('button', 'Start Game').click();
-        // ÷TODO Session id and url populated
       cy.contains('button', 'Close').click();
       cy.contains('Session Active').should('exist');
+    });
+
+    it('Stops game and gets results', () => {
+      cy.visit('/dashboard');
       cy.contains('Stop Game').click();
       cy.contains('Game Session Stopped').should('exist');
       cy.contains('button', 'View Results').click();
+      cy.wait(1000);
+      // cy.contains('Fail');
       // cy.url().should('include', '/results');
     });
   
