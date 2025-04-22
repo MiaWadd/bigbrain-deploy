@@ -32,7 +32,6 @@ describe('Happy Path of a Player', () => {
       cy.get('input[id="gameName"]').type("Test New Game");
       cy.contains('button', 'Create Game').click();
       cy.contains("Test New Game").should('exist');
-      cy.visit('/dashboard'); //TODO remove
       // Adds questions to the game
       cy.contains('button', 'Edit').click();
       cy.url().should('include', '/game');

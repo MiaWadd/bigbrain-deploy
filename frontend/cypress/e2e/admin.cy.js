@@ -52,11 +52,10 @@ describe('Happy Path of an Admin', () => {
       cy.contains('Game Session Stopped').should('exist');
       cy.contains('button', 'View Results').click();
       cy.wait(1000);
-      // cy.contains('Fail');
-      // cy.url().should('include', '/results');
+      cy.url().should('include', '/results');
+      cy.contains('Session Results').should('exist');
+      cy.contains('Top 5 Players').should('exist');
     });
-  
-    // TODO Rsults page
   
     it('Logs out and in again', () => {
       cy.visit('/dashboard');
