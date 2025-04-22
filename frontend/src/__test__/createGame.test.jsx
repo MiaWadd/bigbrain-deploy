@@ -112,4 +112,183 @@ describe('CreateGameModal', () => {
     expect(await screen.findByText(/Game name is required and must be a string/i)).toBeInTheDocument();
   });
 
+  it('loads invalid JSON file, questions not an array', async () => {
+    const mockJson = {
+        "name" : "Imported Game",
+        "questions": "trying somethg e;se"
+    };
+    const file = new File([JSON.stringify(mockJson)], 'game.json', { type: 'application/json' });
+    file.text = vi.fn().mockResolvedValue(JSON.stringify(mockJson));
+    render(<CreateGameModal isOpen={true} onClose={onClose} onCreateGame={onCreateGame} />);
+    const input = screen.getByLabelText(/Upload Game Data/i);
+    fireEvent.change(input, { target: { files: [file] } });
+    expect(await screen.findByText(/Questions must be an array/i)).toBeInTheDocument();
+  });
+
+//   it('loads invalid JSON file, question feild missing', async () => {
+//     const mockJson = {
+//         "name": "Imported Game"
+//     };
+//     const file = new File([JSON.stringify(mockJson)], 'game.json', { type: 'application/json' });
+//     file.text = vi.fn().mockResolvedValue(JSON.stringify(mockJson));
+//     render(<CreateGameModal isOpen={true} onClose={onClose} onCreateGame={onCreateGame} />);
+//     const input = screen.getByLabelText(/Upload Game Data/i);
+//     fireEvent.change(input, { target: { files: [file] } });
+//     expect(await screen.findByText(/Question 1: Question text is required/i)).toBeInTheDocument();
+//   });
+
+  it('loads invalid JSON file, imvalid points', async () => {
+    const mockJson = {
+        "name": "Imported Game",
+        "questions": [
+          {
+            "type": "single-choice",
+            "text": "What is 2 + 2?",
+            "points": "string",
+            "duration": 30,
+            "answers": [3, 4],
+            "correctAnswers": [1]
+          }
+        ]
+    };
+    const file = new File([JSON.stringify(mockJson)], 'game.json', { type: 'application/json' });
+    file.text = vi.fn().mockResolvedValue(JSON.stringify(mockJson));
+    render(<CreateGameModal isOpen={true} onClose={onClose} onCreateGame={onCreateGame} />);
+    const input = screen.getByLabelText(/Upload Game Data/i);
+    fireEvent.change(input, { target: { files: [file] } });
+    expect(await screen.findByText(/Question 1: Points must be a positive integer/i)).toBeInTheDocument();
+  });
+
+  it('loads invalid JSON file, invalid duration', async () => {
+    const mockJson = {
+        "name": "Imported Game",
+        "questions": [
+          {
+            "type": "single-choice",
+            "text": "What is 2 + 2?",
+            "points": 10,
+            "duration": -2,
+            "answers": [3, 4],
+            "correctAnswers": [1]
+          }
+        ]
+    };
+    const file = new File([JSON.stringify(mockJson)], 'game.json', { type: 'application/json' });
+    file.text = vi.fn().mockResolvedValue(JSON.stringify(mockJson));
+    render(<CreateGameModal isOpen={true} onClose={onClose} onCreateGame={onCreateGame} />);
+    const input = screen.getByLabelText(/Upload Game Data/i);
+    fireEvent.change(input, { target: { files: [file] } });
+    expect(await screen.findByText(/Question 1: Duration must be a positive integer/i)).toBeInTheDocument();
+  });
+
+  it('loads invalid JSON file, invalid answers', async () => {
+    const mockJson = {
+        "name": "Imported Game",
+        "questions": [
+          {
+            "type": "single-choice",
+            "text": "What is 2 + 2?",
+            "points": 10,
+            "duration": 30,
+            "answers": [4],
+            "correctAnswers": [1]
+          }
+        ]
+    };
+    const file = new File([JSON.stringify(mockJson)], 'game.json', { type: 'application/json' });
+    file.text = vi.fn().mockResolvedValue(JSON.stringify(mockJson));
+    render(<CreateGameModal isOpen={true} onClose={onClose} onCreateGame={onCreateGame} />);
+    const input = screen.getByLabelText(/Upload Game Data/i);
+    fireEvent.change(input, { target: { files: [file] } });
+    expect(await screen.findByText(/Question 1: At least 2 answers are required/i)).toBeInTheDocument();
+  });
+
+  it('loads invalid JSON file, invalid answer for single-choice', async () => {
+    const mockJson = {
+        "name": "Imported Game",
+        "questions": [
+          {
+            "type": "single-choice",
+            "text": "What is 2 + 2?",
+            "points": 10,
+            "duration": 30,
+            "answers": [3, 4],
+            "correctAnswers": "5"
+          }
+        ]
+    };
+    const file = new File([JSON.stringify(mockJson)], 'game.json', { type: 'application/json' });
+    file.text = vi.fn().mockResolvedValue(JSON.stringify(mockJson));
+    render(<CreateGameModal isOpen={true} onClose={onClose} onCreateGame={onCreateGame} />);
+    const input = screen.getByLabelText(/Upload Game Data/i);
+    fireEvent.change(input, { target: { files: [file] } });
+    expect(await screen.findByText(/Question 1: At least one correct answer is required/i)).toBeInTheDocument();
+  });
+
+  it('loads invalid JSON file, judement quesiton not 2 answers', async () => {
+    const mockJson = {
+        "name": "Imported Game",
+        "questions": [
+          {
+            "type": "judgement",
+            "text": "What is 2 + 2?",
+            "points": 10,
+            "duration": 30,
+            "answers": [3, 4, 5],
+            "correctAnswers": [2]
+          }
+        ]
+    };
+    const file = new File([JSON.stringify(mockJson)], 'game.json', { type: 'application/json' });
+    file.text = vi.fn().mockResolvedValue(JSON.stringify(mockJson));
+    render(<CreateGameModal isOpen={true} onClose={onClose} onCreateGame={onCreateGame} />);
+    const input = screen.getByLabelText(/Upload Game Data/i);
+    fireEvent.change(input, { target: { files: [file] } });
+    expect(await screen.findByText(/Question 1: Judgement questions must have exactly 2 answers/i)).toBeInTheDocument();
+  });
+
+  it('loads invalid JSON file, judement answer not 2 answers', async () => {
+    const mockJson = {
+        "name": "Imported Game",
+        "questions": [
+          {
+            "type": "judgement",
+            "text": "What is 2 + 2?",
+            "points": 10,
+            "duration": 30,
+            "answers": [3, 4],
+            "correctAnswers": [0, 1]
+          }
+        ]
+    };
+    const file = new File([JSON.stringify(mockJson)], 'game.json', { type: 'application/json' });
+    file.text = vi.fn().mockResolvedValue(JSON.stringify(mockJson));
+    render(<CreateGameModal isOpen={true} onClose={onClose} onCreateGame={onCreateGame} />);
+    const input = screen.getByLabelText(/Upload Game Data/i);
+    fireEvent.change(input, { target: { files: [file] } });
+    expect(await screen.findByText(/Question 1: Judgement questions must have exactly one correct answer/i)).toBeInTheDocument();
+  });
+
+  it('loads invalid JSON file, invalid answer index', async () => {
+    const mockJson = {
+        "name": "Imported Game",
+        "questions": [
+          {
+            "type": "judgement",
+            "text": "What is 2 + 2?",
+            "points": 10,
+            "duration": 30,
+            "answers": [3, 4],
+            "correctAnswers": [1, 2]
+          }
+        ]
+    };
+    const file = new File([JSON.stringify(mockJson)], 'game.json', { type: 'application/json' });
+    file.text = vi.fn().mockResolvedValue(JSON.stringify(mockJson));
+    render(<CreateGameModal isOpen={true} onClose={onClose} onCreateGame={onCreateGame} />);
+    const input = screen.getByLabelText(/Upload Game Data/i);
+    fireEvent.change(input, { target: { files: [file] } });
+    expect(await screen.findByText(/Question 1: Invalid correct answer index/i)).toBeInTheDocument();
+  });
+
 });
