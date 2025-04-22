@@ -7,7 +7,7 @@ function NavBar({ showLogout = false, onLogout }) {
         <div className="flex justify-between h-16">
           <div className="flex">
             <div className="flex-shrink-0 flex items-center">
-              <Link to="/dashboard" className="text-3xl font-bold text-blue-600 hover:text-blue-800">
+              <Link to="/dashboard" className="text-3xl font-bold text-blue-800 hover:text-blue-900">
                 Big Brain
               </Link>
             </div>
@@ -16,7 +16,7 @@ function NavBar({ showLogout = false, onLogout }) {
             <div className="flex items-center">
               <button
                 onClick={onLogout}
-                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-medium"
+                className="bg-red-600 hover:bg-red-800 text-white px-4 py-2 rounded-md text-sm font-medium"
               >
                 Logout
               </button>

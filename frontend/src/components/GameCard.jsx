@@ -199,7 +199,7 @@ function GameCard({ game, onDelete }) {
             }}
           />
         ) : (
-          <span className="text-gray-400 text-sm">No Thumbnail</span>
+          <span className="text-gray-700 text-sm">No Thumbnail</span>
         )}
       </div>
 
@@ -210,13 +210,13 @@ function GameCard({ game, onDelete }) {
           </div>
         )}
         
-        <h3 className="text-xl font-semibold mb-2">{gameName}</h3>
+        <h2 className="text-xl font-semibold mb-2">{gameName}</h2>
         
         <div className="mb-4 space-y-1">
           <p className="text-gray-600">Questions: {questions.length}</p>
           <p className="text-gray-600">Duration: {calculateTotalDuration(questions)}s</p>
           {isActive && sessionId && (
-            <p className="text-green-600 font-medium">
+            <p className="text-green-700 font-medium">
               Session Active • ID: {sessionId}
               <button
                 onClick={() => navigate(`/session/${sessionId}`)}
@@ -242,10 +242,10 @@ function GameCard({ game, onDelete }) {
             <button
               onClick={stopGame}
               disabled={loading}
-              className={`px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${
+              className={`px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-600 ${
                 loading
-                  ? 'bg-red-400 text-white cursor-wait'
-                  : 'bg-red-600 text-white hover:bg-red-700'
+                  ? 'bg-red-500 text-white cursor-wait'
+                  : 'bg-red-700 text-white hover:bg-red-800'
               }`}
             >
               {loading ? 'Stopping...' : 'Stop Game'}
@@ -254,10 +254,10 @@ function GameCard({ game, onDelete }) {
             <button
               onClick={startGame}
               disabled={loading}
-              className={`px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500 ${
+              className={`px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600 ${
                 loading
-                  ? 'bg-green-400 text-white cursor-wait'
-                  : 'bg-green-600 text-white hover:bg-green-700'
+                  ? 'bg-green-500 text-white cursor-wait'
+                  : 'bg-green-700 text-white hover:bg-green-800'
               }`}
             >
               {loading ? 'Starting...' : 'Start Game'}
@@ -267,7 +267,7 @@ function GameCard({ game, onDelete }) {
           {gameId && (
             <button
               onClick={() => onDelete(gameId)}
-              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+              className="px-4 py-2 bg-red-700 text-white rounded-md hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-600"
             >
               Delete
             </button>
