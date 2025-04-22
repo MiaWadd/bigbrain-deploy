@@ -155,12 +155,19 @@ function GameCard({ game, onDelete }) {
   const handleViewResults = () => {
     if (!game?.id) return;
 
+    // If we have an active session that was just stopped, use that
+    if (sessionId) {
+      navigate(`/session/${sessionId}/results`);
+      return;
+    }
+
+    // Otherwise, try to use the most recent old session
     if (game?.oldSessions && Array.isArray(game.oldSessions) && game.oldSessions.length > 0) {
       const latestSessionId = game.oldSessions[game.oldSessions.length - 1];
       navigate(`/session/${latestSessionId}/results`);
     } else {
       console.error('Could not determine session ID for results viewing.', game);
-      // Optionally, show an error to the user
+      setError('No session results available to view');
     }
   };
 
