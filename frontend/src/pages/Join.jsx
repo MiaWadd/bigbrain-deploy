@@ -70,8 +70,9 @@ function JoinGame() {
           <h1 className="text-3xl text-center font-large text-black">Join a Game</h1>   
           <form onSubmit={joinGame}>
             <div className="max-w-sm mx-auto mt-5">
-              <label className="text-md font-normal text-black">Session ID</label>
+              <label for="session-id" className="text-md font-normal text-black">Session ID</label>
               <input
+                id="session-id"
                 value={sessionId} 
                 onChange={e => setSessionId(e.target.value)}
                 required
@@ -80,8 +81,9 @@ function JoinGame() {
               />
             </div>
             <div className="max-w-sm mx-auto mt-5">
-              <label className="text-md font-normal text-black">Name</label>
+              <label for="player-name" className="text-md font-normal text-black">Name</label>
               <input
+                id="player-name"
                 value={name} 
                 onChange={e => setName(e.target.value)}
                 required
