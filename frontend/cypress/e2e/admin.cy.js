@@ -4,14 +4,14 @@ describe('Happy Path of an Admin', () => {
   // Make local storeage persist
   let LOCAL_STORAGE_MEMORY = {};
   beforeEach(() => {
-  Object.keys(LOCAL_STORAGE_MEMORY).forEach(key => {
+    Object.keys(LOCAL_STORAGE_MEMORY).forEach(key => {
       localStorage.setItem(key, LOCAL_STORAGE_MEMORY[key]);
-  });
+    });
   });
   afterEach(() => {
-  Object.keys(localStorage).forEach(key => {
+    Object.keys(localStorage).forEach(key => {
       LOCAL_STORAGE_MEMORY[key] = localStorage.getItem(key);
-  });
+    });
   });
 
   const timestamp = Date.now();
@@ -25,7 +25,6 @@ describe('Happy Path of an Admin', () => {
     cy.get('input[id="register-password"]').type(password);
     cy.get('input[id="register-confirm-password"]').type(password);
     cy.contains('button', 'Register').click();
-    cy.wait(1000);
     cy.url().should('include', '/dashboard');
     cy.contains('Dashboard');
   });
@@ -33,10 +32,8 @@ describe('Happy Path of an Admin', () => {
   it('Creates a new game', () => {
     cy.visit('/dashboard');
     cy.contains('button', 'Create New Game').click();
-    cy.wait(500);
     cy.get('input[id="gameName"]').type("Test New Game");
     cy.contains('button', 'Create Game').click();
-    cy.wait(500);
     cy.contains("Test New Game").should('exist');
   });
 
@@ -52,7 +49,6 @@ describe('Happy Path of an Admin', () => {
     cy.contains('Stop Game').click();
     cy.contains('Game Session Stopped').should('exist');
     cy.contains('button', 'View Results').click();
-    cy.wait(1000);
     cy.url().should('include', '/results');
     cy.contains('Session Results').should('exist');
     cy.contains('Top 5 Players').should('exist');

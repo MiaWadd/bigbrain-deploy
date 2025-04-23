@@ -212,9 +212,9 @@ export default function SessionControl() {
     return (
       <div className="min-h-screen bg-gray-100">
         <Navbar showLogout={true} onLogout={() => {
-        localStorage.setItem('token', '');
-        navigate('/login');
-      }} />
+          localStorage.setItem('token', '');
+          navigate('/login');
+        }} />
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-xl">Loading session...</div>
         </div>
@@ -226,9 +226,9 @@ export default function SessionControl() {
     return (
       <div className="min-h-screen bg-gray-100">
         <Navbar showLogout={true} onLogout={() => {
-        localStorage.setItem('token', '');
-        navigate('/login');
-      }} />
+          localStorage.setItem('token', '');
+          navigate('/login');
+        }} />
         <div className="flex flex-col items-center justify-center pt-10 p-4">
           <div className="bg-red-50 border border-red-200 rounded p-4 text-red-700 max-w-md w-full text-center">
             <p className="font-medium">Error</p>

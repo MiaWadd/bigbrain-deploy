@@ -15,6 +15,7 @@ function PastSessions() {
 
   useEffect(() => {
     const fetchGame = async () => {
+      const token = localStorage.getItem('token');
       try {
         const response = await axios.get(`${API_URL}/admin/games`, {
           headers: {
@@ -36,7 +37,7 @@ function PastSessions() {
     };
 
     fetchGame();
-  }, [gameId, token]);
+  }, [gameId]);
 
   const handleViewResults = (sessionId) => {
     navigate(`/session/${sessionId}/results`);
@@ -46,9 +47,9 @@ function PastSessions() {
     return (
       <div className="min-h-screen bg-gray-100">
         <Navbar showLogout={true} onLogout={() => {
-        localStorage.setItem('token', null);
-        navigate('/login');
-      }} />
+          localStorage.setItem('token', null);
+          navigate('/login');
+        }} />
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">Loading...</div>
         </div>
@@ -59,10 +60,10 @@ function PastSessions() {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-100">
-<Navbar showLogout={true} onLogout={() => {
-        localStorage.setItem('token', '');
-        navigate('/login');
-      }} />
+        <Navbar showLogout={true} onLogout={() => {
+          localStorage.setItem('token', '');
+          navigate('/login');
+        }} />
         <div className="container mx-auto px-4 py-8">
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
             <strong className="font-bold">Error: </strong>
