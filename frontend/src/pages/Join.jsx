@@ -36,8 +36,8 @@ function JoinGame() {
       if (response.data.playerId) {
         // Store playerId in localStorage
         localStorage.setItem('playerId', response.data.playerId);
-        localStorage.setItem('duration', []);
-        localStorage.setItem('points', []);
+        localStorage.setItem('duration', '[]');
+        localStorage.setItem('points', '[]');
         // Navigate to lobby to wait for game to start
         navigate('/lobby');
       } else {

@@ -7,7 +7,7 @@ import Navbar from '../components/Navbar';
 const BACKEND_PORT = 5005;
 const API_URL = `http://localhost:${BACKEND_PORT}`;
 
-export default function SessionControl({ token, updateToken }) {
+export default function SessionControl() {
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const [currentQuestion, setCurrentQuestion] = useState(null);
@@ -22,6 +22,7 @@ export default function SessionControl({ token, updateToken }) {
   // Get initial game ID
   const fetchGameId = async () => {
     try {
+      const token = localStorage.getItem('token');
       const response = await axios.get(`${API_URL}/admin/games`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -63,7 +64,7 @@ export default function SessionControl({ token, updateToken }) {
         if (isMounted.current) setLoading(false);
         return;
       }
-
+      const token = localStorage.getItem('token');
       const response = await axios.get(`${API_URL}/admin/session/${sessionId}/status`, {
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -93,7 +94,7 @@ export default function SessionControl({ token, updateToken }) {
   useEffect(() => {
     isMounted.current = true;
     let intervalId = null;
-
+    const token = localStorage.getItem('token');
     const setup = async () => {
       if (!sessionId || !token) {
         if (isMounted.current) setLoading(false);
@@ -126,7 +127,7 @@ export default function SessionControl({ token, updateToken }) {
         clearInterval(intervalId);
       }
     };
-  }, [sessionId, token]);
+  }, [sessionId]);
 
   // Advance to next question
   const handleAdvance = async () => {
@@ -136,8 +137,8 @@ export default function SessionControl({ token, updateToken }) {
     }
     if (isMounted.current) setActionLoading(true);
     if (isMounted.current) setError(null);
+    const token = localStorage.getItem('token');
     try {
-      const token = localStorage.getItem('token');
       await axios.post(
         `${API_URL}/admin/game/${gameId}/mutate`,
         { mutationType: 'ADVANCE' },
@@ -172,8 +173,8 @@ export default function SessionControl({ token, updateToken }) {
     }
     if (isMounted.current) setActionLoading(true);
     if (isMounted.current) setError(null);
+    const token = localStorage.getItem('token');
     try {
-      const token = localStorage.getItem('token');
       await axios.post(
         `${API_URL}/admin/game/${gameId}/mutate`,
         { mutationType: 'END' },
@@ -206,16 +207,14 @@ export default function SessionControl({ token, updateToken }) {
     navigate(`/session/${sessionId}/results`);
   };
 
-  // Logout handler for Navbar
-  const handleLogout = () => {
-    updateToken(null);
-    navigate('/login');
-  };
 
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100">
-        <Navbar showLogout={true} onLogout={handleLogout} />
+        <Navbar showLogout={true} onLogout={() => {
+        localStorage.setItem('token', '');
+        navigate('/login');
+      }} />
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-xl">Loading session...</div>
         </div>
@@ -226,7 +225,10 @@ export default function SessionControl({ token, updateToken }) {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-100">
-        <Navbar showLogout={true} onLogout={handleLogout} />
+        <Navbar showLogout={true} onLogout={() => {
+        localStorage.setItem('token', '');
+        navigate('/login');
+      }} />
         <div className="flex flex-col items-center justify-center pt-10 p-4">
           <div className="bg-red-50 border border-red-200 rounded p-4 text-red-700 max-w-md w-full text-center">
             <p className="font-medium">Error</p>
@@ -245,7 +247,10 @@ export default function SessionControl({ token, updateToken }) {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar showLogout={true} onLogout={handleLogout} />
+      <Navbar showLogout={true} onLogout={() => {
+        localStorage.setItem('token', '');
+        navigate('/login');
+      }} />
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           <div className="bg-white rounded-lg shadow-md p-6">

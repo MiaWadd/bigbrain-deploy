@@ -78,8 +78,8 @@ function Play() {
       if (playerId && err.response.data.error === "Session ID is not an active session") {
         // Game is complete
         setGameHasStarted(false);
-        localStorage.setItem('points', points);
-        localStorage.setItem('duration', duration);
+        // localStorage.setItem('points', points);
+        // localStorage.setItem('duration', duration);
         navigate('/results');
       } else {
         navigate('/join');
@@ -131,6 +131,7 @@ function Play() {
         const updatedDuration = [...duration, questionData.duration];
         setPoints(updatedPoints);
         setDuration(updatedPoints);
+        console.log(localStorage.getItem('points'));
         localStorage.setItem('points', JSON.stringify(updatedPoints));
         localStorage.setItem('duration', JSON.stringify(updatedDuration));
       }

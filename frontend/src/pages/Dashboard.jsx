@@ -55,7 +55,8 @@ function Dashboard() {
         errorMessage = `Error: ${err.response.status} - ${err.response.data?.error || 'Server error'}`;
         if (err.response.status === 403) {
           errorMessage += " Check if your token is valid or expired.";
-          localStorage.setItem('token', null);
+          localStorage.setItem('token', '');
+          console.log("navigating to login");
           navigate('/login');
         }
       } else if (err.request) {
@@ -137,7 +138,6 @@ function Dashboard() {
   // Function to handle game deletion
   const handleDeleteGame = async () => {
     if (!deleteGame) return;
-
     const token = localStorage.getItem('token');
     if (!token) {
       setError('Authentication token not found. Please log in.');
@@ -213,7 +213,7 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar showLogout={true} onLogout={() => {
-        localStorage.setItem('token', null);
+        localStorage.setItem('token', '');
         navigate('/login');
       }} />
 

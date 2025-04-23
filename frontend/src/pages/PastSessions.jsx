@@ -6,7 +6,7 @@ import Navbar from '../components/Navbar';
 const BACKEND_PORT = 5005;
 const API_URL = `http://localhost:${BACKEND_PORT}`;
 
-function PastSessions({ token, updateToken }) {
+function PastSessions() {
   const { gameId } = useParams();
   const navigate = useNavigate();
   const [game, setGame] = useState(null);
@@ -46,9 +46,9 @@ function PastSessions({ token, updateToken }) {
     return (
       <div className="min-h-screen bg-gray-100">
         <Navbar showLogout={true} onLogout={() => {
-          updateToken(null);
-          navigate('/login');
-        }} />
+        localStorage.setItem('token', null);
+        navigate('/login');
+      }} />
         <div className="container mx-auto px-4 py-8">
           <div className="text-center">Loading...</div>
         </div>
@@ -59,10 +59,10 @@ function PastSessions({ token, updateToken }) {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-100">
-        <Navbar showLogout={true} onLogout={() => {
-          updateToken(null);
-          navigate('/login');
-        }} />
+<Navbar showLogout={true} onLogout={() => {
+        localStorage.setItem('token', '');
+        navigate('/login');
+      }} />
         <div className="container mx-auto px-4 py-8">
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
             <strong className="font-bold">Error: </strong>
@@ -76,7 +76,7 @@ function PastSessions({ token, updateToken }) {
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar showLogout={true} onLogout={() => {
-        updateToken(null);
+        localStorage.setItem('token', null);
         navigate('/login');
       }} />
       <div className="container mx-auto px-4 py-8">

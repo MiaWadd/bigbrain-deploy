@@ -6,7 +6,7 @@ import NavBar from '../components/Navbar';
 const BACKEND_PORT = 5005;
 const API_URL = `http://localhost:${BACKEND_PORT}`;
 
-function Register({ updateToken, token }) {
+function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -16,10 +16,11 @@ function Register({ updateToken, token }) {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const token = localStorage.getItem('token');
     if (token) {
       navigate('/dashboard');
     }
-  }, [token, navigate]);
+  }, [navigate]);
 
   const register = async (e) => {
     e.preventDefault();
@@ -37,7 +38,7 @@ function Register({ updateToken, token }) {
 
         // Check if we have a valid response with token
         if (response?.data?.token) {
-          updateToken(response.data.token);
+          localStorage.setItem('token', response?.data?.token);
           localStorage.setItem('email', email);
           navigate('/dashboard');
         } else {
