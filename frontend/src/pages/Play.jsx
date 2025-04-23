@@ -119,8 +119,7 @@ function Play() {
         const updatedPoints = [...points, questionData.points];
         const updatedDuration = [...duration, questionData.duration];
         setPoints(updatedPoints);
-        setDuration(updatedPoints);
-        console.log(localStorage.getItem('points'));
+        setDuration(updatedDuration);
         localStorage.setItem('points', JSON.stringify(updatedPoints));
         localStorage.setItem('duration', JSON.stringify(updatedDuration));
       }

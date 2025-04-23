@@ -61,6 +61,22 @@ function Results() {
       <h1 className="text-5xl font-bold mb-20 mt-30 flex flex-col items-center justify-center">
         Your Results
       </h1>
+      <div className="text-5xl font-bold mb-10 mt-10 flex flex-col items-center justify-center">
+        {(() => {
+          let total = 0;
+          resultsData.map((item, index) => {
+            const start = new Date(item.questionStartedAt);
+            const end = new Date(item.answeredAt);
+            const timeTaken = ((end - start) / 1000).toFixed(2);
+            let adv = ((1 - ((timeTaken / duration[index]) / 2)) * points[index]).toFixed(2);
+            if (isNaN(adv) || !item.correct) {
+              adv = 0;
+            }
+            total += parseFloat(adv);
+          });
+          return total;
+        })()}
+      </div>
       <div className="space-y-4 px-4 max-w-xl mx-auto">
         {resultsData.map((item, index) => {
           const start = new Date(item.questionStartedAt);
@@ -86,6 +102,9 @@ function Results() {
           );
         })}
       </div>
+      <p className='text-center mt-10'>
+        Score Calculation: ( 1 - ( &#123;&nbsp;response time&nbsp; / &nbsp;question duration&nbsp;&#125;&nbsp; / 2 )) &nbsp;x&nbsp;&#123;&nbsp;points&nbsp;&#125;
+      </p>
     </>
   );
 }

@@ -30,32 +30,51 @@ ChartJS.register(
 const BACKEND_PORT = 5005;
 const API_URL = `http://localhost:${BACKEND_PORT}`;
 
+const getGame = async ({ sessionId }) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await axios.get(`${API_URL}/admin/games`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      }
+    });
+    if (response.data && Array.isArray(response.data.games)) {
+      const games = response.data.games;
+      const game = games.filter(game => game.oldSessions.includes(Number(sessionId)));
+      return game;
+    } else {
+      return [];
+    }
+  } catch {
+    return [];
+  } 
+}
 // --- Helper Function to Calculate Stats ---
-const processApiResults = (apiData) => {
+const processApiResults = async (apiData, sessionId) => {
   if (!Array.isArray(apiData) || apiData.length === 0) {
     return { players: [], questionResults: [], totalPlayers: 0 };
   }
+  // 0. Get game data
+  const game = await getGame({ sessionId });
 
   // 1. Calculate Player Scores
-  const playersWithScores = apiData.map(player => {
-    const points = localStorage.getItem('points')?.split(',').map(p => Number(p)) || [];
-    const durations = localStorage.getItem('duration')?.split(',').map(p => Number(p)) || [];
-    
-    const score = player.answers.reduce((acc, answer, index) => {
+  const playersWithScores =  apiData.map((player, index) => {
+    if (game.length === 0) {
+      return { ...player, score: parseFloat(0) };
+    }
+    let points = game[0].questions[index].points;
+    let duration = game[0].questions[index].duration;
+    const score = player.answers.reduce((acc, answer) => {
       if (!answer.correct) return acc;
       
       const start = new Date(answer.questionStartedAt);
       const end = new Date(answer.answeredAt);
-      const timeTaken = ((end - start) / 1000);
-      
-      const basePoints = points[index] || 1000; // Default to 1000 if not found
-      const duration = durations[index] || 20; // Default to 20 seconds if not found
-      
-      const adjustedPoints = ((1 - ((timeTaken / duration) / 2)) * basePoints);
+      const timeTaken = ((end - start) / 1000).toFixed(2);
+      const adjustedPoints = ((1 - ((timeTaken / duration) / 2)) * points).toFixed(2);
       return acc + adjustedPoints;
     }, 0);
 
-    return { ...player, score: parseFloat(score.toFixed(2)) }; 
+    return { ...player, score: parseFloat(score) }; 
   });
 
   // 2. Calculate Question Results (Correct % and Avg Time)
@@ -91,7 +110,6 @@ const processApiResults = (apiData) => {
       averageAnswerTime: parseFloat(averageAnswerTime.toFixed(1)), // Round to 1 decimal
     });
   }
-
   return {
     players: playersWithScores,
     questionResults: questionResults,
@@ -124,13 +142,12 @@ function SessionResults() {
             Authorization: `Bearer ${token}`,
           }
         });
-        
-        console.log("Raw API Response:", response.data);
-        
         // Pass response.data.results (the array) to the processor
-        const processed = processApiResults(response.data.results);
-        console.log("Processed Data:", processed);
+        const results = response.data.results
+        const processed = await processApiResults(results, sessionId);
         setProcessedData(processed);
+
+
         
       } catch (err) {
         console.error("Error fetching session results:", err);
@@ -301,6 +318,9 @@ function SessionResults() {
 
           </div>
         )}
+        <p className='text-center mt-10'>
+          Score Calculation: ( 1 - ( &#123;&nbsp;response time&nbsp; / &nbsp;question duration&nbsp;&#125;&nbsp; / 2 )) &nbsp;x&nbsp;&#123;&nbsp;points&nbsp;&#125;
+        </p>
       </div>
     </div>
   );
