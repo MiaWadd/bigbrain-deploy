@@ -66,7 +66,7 @@ describe("Login Component", () => {
       });
   });
 
-  it("Navigates to /home TODO dashboard after successful login", async () => {
+  it("Navigates to /dashboard after successful login", async () => {
     axios.post.mockResolvedValue({
       data: {
         token: 'mockToken123',
@@ -75,7 +75,6 @@ describe("Login Component", () => {
     fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@example.com' } });
     fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'password123' } });
     fireEvent.click(screen.getByRole('button', { name: /Login/i }));
-
     await waitFor(() => {
       expect(mockedNavigate).toHaveBeenCalledWith('/dashboard');
     });

@@ -23,7 +23,7 @@ function GameCard({ game, onDelete }) {
     }
   }, [game]);
 
-  // Check session status on mount and when sessionId changes //TODO DOes this work here?
+  // Check session status on mount and when sessionId changes
   useEffect(() => {
     if (game?.id) {
       checkSessionStatus();
@@ -177,13 +177,6 @@ function GameCard({ game, onDelete }) {
       setError('No session results available to view');
     }
   };
-
-  // // Check session status on mount and when sessionId changes
-  // useEffect(() => {
-  //   if (game?.id) {
-  //     checkSessionStatus();
-  //   }
-  // }, [game?.active, sessionId]);
 
   const gameName = typeof game?.name === 'string' ? game.name : 'Untitled Game';
   const gameId = game?.id;

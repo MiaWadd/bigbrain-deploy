@@ -1,4 +1,3 @@
-/// <reference types="cypress" />
 describe('Happy Path of an Admin', () => {
 
   // Make local storeage persist
