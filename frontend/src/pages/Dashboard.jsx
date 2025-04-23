@@ -187,11 +187,6 @@ function Dashboard() {
     fetchGames();
   }, []);
 
-  // const calculateTotalDuration = (questions) => {
-  //   if (!Array.isArray(questions)) return 0;
-  //   return questions.reduce((total, question) => total + (question.duration || 0), 0);
-  // };
-
   if (loading) {
     return <div className="p-8 text-center">Loading games...</div>;
   }

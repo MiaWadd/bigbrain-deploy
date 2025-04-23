@@ -67,7 +67,6 @@ function Results() {
           const end = new Date(item.answeredAt);
           const timeTaken = ((end - start) / 1000).toFixed(2);
           const adv = ((1 - ((timeTaken / duration[index]) / 2)) * points[index]).toFixed(2);
-          // const points = calcualtePoints({ index, timeTaken });
           return (
             <div key={index} className="p-4 flex justify-between items-center">
               <div>

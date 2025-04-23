@@ -18,7 +18,6 @@ function EditQuestion() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
-  // const [game, setGame] = useState(null);
 
   // Question state with proper initialization
   const [questionData, setQuestionData] = useState({
@@ -89,7 +88,6 @@ function EditQuestion() {
         media: question.media || { type: null, url: '' },
       };
 
-      // setGame(game); //COMENTED OUT TODO
       setQuestionData(processedQuestion);
       setError(null);
     } catch (err) {

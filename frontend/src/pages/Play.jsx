@@ -4,10 +4,6 @@ import ReactPlayer from 'react-player';
 import axios from 'axios';
 import CountdownTimer from '../components/QuestionCountdown';
 
-// ÷BUGS :
-// answer selection does not save on refresh
-// Answers not yet availble o refesh
-
 const QUESTION_TYPES = {
   SINGLE_CHOICE: 'single-choice',
   MULTIPLE_CHOICE: 'multiple-choice',
@@ -32,10 +28,7 @@ function Play() {
   const [currQuestion, setCurrQuestion] = useState(null);
   const [points, setPoints] = useState([]);
   const [duration, setDuration] = useState([]);
-
-
   const [error, setError] = useState(null);
-
 
   // If no playerId, redirect to join game
   useEffect(() => {
@@ -78,8 +71,6 @@ function Play() {
       if (playerId && err.response.data.error === "Session ID is not an active session") {
         // Game is complete
         setGameHasStarted(false);
-        // localStorage.setItem('points', points);
-        // localStorage.setItem('duration', duration);
         navigate('/results');
       } else {
         navigate('/join');
@@ -110,8 +101,6 @@ function Play() {
         setSelectedAnswers([]);
         setCorrectAnswers([]);
         setTimesUp(false);
-        // setPoints(prevPoints => [...prevPoints, questionData.points]);
-        // setDuration(prevDur => [...prevDur, questionData.duration]);
         if (questionData.type === 'judgement') {
           setAnswers(['True', "False"]);
         } else {
@@ -143,11 +132,8 @@ function Play() {
       // Game has completed
       if (err.response.data.error === "Session ID is not an active session" && gameHasStarted) {
         setGameHasStarted(false);
-        // localStorage.setItem('points', points);
-        // localStorage.setItem('duration', duration);
         navigate('/results');
       }
-      console.log(err); // TODO
     }
   };
   
@@ -208,9 +194,8 @@ function Play() {
       )}
       {playerId && (
         <>
-          {gameHasStarted ? (
+          {gameHasStarted && (
             <>
-              {/* <CountdownTimer duration={duration} onExpire={handleTimeUp} /> */}
               {endTime && <CountdownTimer endTime={endTime} onExpire={handleTimeUp} />}
               <div className="pt-30">
                 {image && (	
@@ -256,8 +241,6 @@ function Play() {
                 </div>
               </div>
             </>
-          ) : (
-            <p className="text-center text-2xl font-semibold mt-10">Waiting for game to start  TODO CHANGE...</p>
           )}
         </>
       )}
