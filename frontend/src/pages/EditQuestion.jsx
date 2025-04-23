@@ -282,10 +282,11 @@ function EditQuestion() {
       <div className="space-y-6 max-w-3xl">
         {/* Question Type */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label for="question-type" className="block text-sm font-medium text-gray-700 mb-2">
             Question Type
           </label>
           <select
+           id="question-type"
             value={questionData.type}
             onChange={(e) => {
               setQuestionData(prev => ({
@@ -319,10 +320,11 @@ function EditQuestion() {
         {/* Time Limit and Points */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label for="duration" className="block text-sm font-medium text-gray-700 mb-2">
               Time Limit (seconds)
             </label>
             <input
+              id="duration"
               type="number"
               value={questionData.timeLimit}
               onChange={(e) => setQuestionData(prev => ({ ...prev, timeLimit: parseInt(e.target.value) || 0 }))}
@@ -331,10 +333,11 @@ function EditQuestion() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label for="points" className="block text-sm font-medium text-gray-700 mb-2">
               Points
             </label>
             <input
+              id="points"
               type="number"
               value={questionData.points}
               onChange={(e) => setQuestionData(prev => ({ ...prev, points: parseInt(e.target.value) || 0 }))}

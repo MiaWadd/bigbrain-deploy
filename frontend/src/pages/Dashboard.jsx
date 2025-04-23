@@ -55,6 +55,8 @@ function Dashboard({ token, updateToken }) {
         errorMessage = `Error: ${err.response.status} - ${err.response.data?.error || 'Server error'}`;
         if (err.response.status === 403) {
           errorMessage += " Check if your token is valid or expired.";
+          localStorage.setItem('token', null);
+          navigate('/login');
         }
       } else if (err.request) {
         errorMessage = 'Failed to fetch games: No response from server. Is the backend running?';
@@ -229,7 +231,7 @@ function Dashboard({ token, updateToken }) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {games.length === 0 ? (
-            <p className="text-gray-500 col-span-full text-center py-10">No games found. Create one!</p>
+            <p className="text-gray-700 col-span-full text-center text-xl py-10">No games found. Create one!</p>
           ) : (
             games.map((game) => (
               <GameCard

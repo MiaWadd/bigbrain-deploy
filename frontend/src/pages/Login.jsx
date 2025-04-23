@@ -73,7 +73,7 @@ function Login({ updateToken, token }) {
                 onChange={e => setEmail(e.target.value)}
                 type="email"
                 required
-                className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-700"
               />
             </div>
             <div className="max-w-sm mx-auto mt-5">
@@ -84,7 +84,7 @@ function Login({ updateToken, token }) {
                 onChange={e => setPassword(e.target.value)}
                 type="password"
                 required
-                className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="mt-1 p-2 w-full border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-700"
               />
             </div>
             <button 
@@ -92,16 +92,16 @@ function Login({ updateToken, token }) {
               disabled={loading} 
               className={`mt-5 px-4 py-2 w-full rounded-lg ${
                 loading 
-                  ? 'bg-blue-400 cursor-not-allowed'
-                  : 'bg-blue-500 hover:bg-blue-600'
+                  ? 'bg-blue-600 cursor-not-allowed'
+                  : 'bg-blue-700 hover:bg-blue-800'
               } text-white`}
             >
               {loading ? 'Logging in...' : 'Login'}
             </button>
           </form> 
-          <p className="mt-5 text-center text-md font-normal text-black">
+          <p className="mt-5 text-center text-xl font-normal text-black">
             Don&rsquo;t have an account?{' '}
-            <Link to="/register" className="text-blue-500 hover:underline hover:text-blue-700">Register</Link>
+            <Link to="/register" className="text-blue-700 hover:underline hover:text-blue-700">Register</Link>
           </p>              
         </div>
       </div>

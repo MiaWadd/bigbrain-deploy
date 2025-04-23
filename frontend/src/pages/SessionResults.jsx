@@ -291,7 +291,7 @@ function SessionResults({ token, updateToken }) {
                 </div>
               </div>
             ) : (
-              <p className="text-center text-gray-500 py-6">No question analysis data available.</p>
+              <p className="text-center text-gray-700 py-6">No question analysis data available.</p>
             )}
             
             {/* Bonus Information */}
