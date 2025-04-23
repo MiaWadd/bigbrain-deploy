@@ -47,10 +47,11 @@ describe("Login Component", () => {
     expect(screen.getByLabelText(/Password/i).value).toBe('password123');
   });
 
-  it("Redirects to /dashboard if token exists", () => {
+  it('Redirects to /dashboard if token exists', () => {
+    localStorage.setItem('token', 'mockToken');
     render(
       <MemoryRouter>
-        <Login token={'mockToken'} updateToken={() => {}} />
+        <Login />
       </MemoryRouter>
     );
     expect(mockedNavigate).toHaveBeenCalledWith('/dashboard');
@@ -76,7 +77,6 @@ describe("Login Component", () => {
     fireEvent.click(screen.getByRole('button', { name: /Login/i }));
 
     await waitFor(() => {
-      expect(mockUpdateToken).toHaveBeenCalledWith('mockToken123');
       expect(mockedNavigate).toHaveBeenCalledWith('/dashboard');
     });
   });
