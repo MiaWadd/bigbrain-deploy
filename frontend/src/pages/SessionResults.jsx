@@ -318,6 +318,9 @@ function SessionResults() {
 
           </div>
         )}
+        <p className='text-center mt-10'>
+          Score Calculation: ( 1 - ( &#123;&nbsp;response time&nbsp; / &nbsp;question duration&nbsp;&#125;&nbsp; / 2 )) &nbsp;x&nbsp;&#123;&nbsp;points&nbsp;&#125;
+        </p>
       </div>
     </div>
   );
