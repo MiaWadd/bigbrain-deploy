@@ -8,8 +8,6 @@ function Results() {
   const [resultsData, setResultsData] = useState([]);
   const [playerId, setPlayerId] = useState('');
 
-  console.log(localStorage.getItem('points'));
-
   useEffect(() => {
     if (!localStorage.getItem('playerId')) {
       navigate('/join');
@@ -29,7 +27,6 @@ function Results() {
       const response = await axios.get(
         `http://localhost:5005/play/${playerId}/results`
       );
-      console.log(response.data);
       setResultsData(response.data);
     } catch (error) {
       if (error.response.data.error === 'Session has not started yet') {
@@ -56,8 +53,8 @@ function Results() {
           const start = new Date(item.questionStartedAt);
           const end = new Date(item.answeredAt);
           const timeTaken = ((end - start) / 1000).toFixed(2);
-          const points = localStorage.getItem('points').split(',').map(p => Number(p))[index]; 
-          const duration = localStorage.getItem('duration').split(',').map(p => Number(p))[index]; 
+          const points = JSON.parse(localStorage.getItem('points'))[index];
+          const duration = JSON.parse(localStorage.getItem('duration'))[index]; 
           const adv = ((1 - ((timeTaken / duration) / 2)) * points).toFixed(2);
           return (
             <div key={index} className="p-4 flex justify-between items-center">

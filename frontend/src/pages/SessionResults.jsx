@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
@@ -76,8 +76,8 @@ const processApiResults = (apiData) => {
         const startTime = new Date(answer.questionStartedAt).getTime();
         const endTime = new Date(answer.answeredAt).getTime();
         if (!isNaN(startTime) && !isNaN(endTime) && endTime >= startTime) {
-            totalAnswerTime += (endTime - startTime) / 1000; // Time in seconds
-            answeredCount++;
+          totalAnswerTime += (endTime - startTime) / 1000; // Time in seconds
+          answeredCount++;
         }
       }
     });
@@ -197,19 +197,19 @@ function SessionResults({ token, updateToken }) {
         }
       },
       tooltip: {
-          callbacks: {
-              label: function(context) {
-                  let label = context.dataset.label || '';
-                  if (label) {
-                      label += ': ';
-                  }
-                  if (context.parsed.y !== null) {
-                      // Add '%' for correctness chart, 's' for time chart
-                      label += context.parsed.y + (context.dataset.label.includes('%') ? '%' : 's');
-                  }
-                  return label;
-              }
+        callbacks: {
+          label: function(context) {
+            let label = context.dataset.label || '';
+            if (label) {
+              label += ': ';
+            }
+            if (context.parsed.y !== null) {
+              // Add '%' for correctness chart, 's' for time chart
+              label += context.parsed.y + (context.dataset.label.includes('%') ? '%' : 's');
+            }
+            return label;
           }
+        }
       }
     },
     scales: {
@@ -217,7 +217,7 @@ function SessionResults({ token, updateToken }) {
         beginAtZero: true,
         ticks: {
           // Add '%' for correctness chart y-axis
-          callback: function(value, index, ticks) {
+          callback: function(value) {
             return this.chart.options.plugins.title.text.includes('%') ? value + '%' : value;
           }
         }
@@ -296,9 +296,9 @@ function SessionResults({ token, updateToken }) {
             
             {/* Bonus Information */}
             <div className="bg-white shadow-md rounded-lg p-6 max-w-2xl mx-auto text-center">
-                <h2 className="text-xl font-semibold mb-4">Session Summary</h2>
-                <p className="text-gray-700">Total Players: <span className="font-medium">{processedData.totalPlayers}</span></p>
-                {/* Add more summary stats here if available/calculable from data */}
+              <h2 className="text-xl font-semibold mb-4">Session Summary</h2>
+              <p className="text-gray-700">Total Players: <span className="font-medium">{processedData.totalPlayers}</span></p>
+              {/* Add more summary stats here if available/calculable from data */}
             </div>
 
           </div>

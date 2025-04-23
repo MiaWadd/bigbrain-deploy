@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import StopGamePopup from '../components/StopGamePopup';
@@ -106,14 +106,14 @@ export default function SessionControl({ token, updateToken }) {
       
       if (!isMounted.current || !fetchedGameId) {
         if (isMounted.current && !fetchedGameId && error === null) {
-            setLoading(false);
+          setLoading(false);
         }
         return;
       }
 
       await fetchStatus();
       if (isMounted.current) {
-          intervalId = setInterval(fetchStatus, 1000);
+        intervalId = setInterval(fetchStatus, 1000);
       }
     };
 
@@ -200,111 +200,111 @@ export default function SessionControl({ token, updateToken }) {
     }
   };
 
- // Handle viewing results after stopping (Kept for potential future use, but stop now navigates directly)
- const handleViewResults = () => {
-  setShowStopPopup(false);
-  navigate(`/session/${sessionId}/results`);
-};
+  // Handle viewing results after stopping (Kept for potential future use, but stop now navigates directly)
+  const handleViewResults = () => {
+    setShowStopPopup(false);
+    navigate(`/session/${sessionId}/results`);
+  };
 
-// Logout handler for Navbar
-const handleLogout = () => {
-  updateToken(null);
-  navigate('/login');
-};
+  // Logout handler for Navbar
+  const handleLogout = () => {
+    updateToken(null);
+    navigate('/login');
+  };
 
-if (loading) {
-  return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar showLogout={true} onLogout={handleLogout} />
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-xl">Loading session...</div>
-      </div>
-    </div>
-  );
-}
-
-if (error) {
-  return (
-    <div className="min-h-screen bg-gray-100">
-      <Navbar showLogout={true} onLogout={handleLogout} />
-      <div className="flex flex-col items-center justify-center pt-10 p-4">
-        <div className="bg-red-50 border border-red-200 rounded p-4 text-red-700 max-w-md w-full text-center">
-          <p className="font-medium">Error</p>
-          <p className="text-sm mt-1">{error}</p>
-          <button
-            onClick={() => navigate('/dashboard')}
-            className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-          >
-            Return to Dashboard
-          </button>
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-100">
+        <Navbar showLogout={true} onLogout={handleLogout} />
+        <div className="flex items-center justify-center min-h-screen">
+          <div className="text-xl">Loading session...</div>
         </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
-return (
-  <div className="min-h-screen bg-gray-100">
-    <Navbar showLogout={true} onLogout={handleLogout} />
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-3xl mx-auto">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold">Session Control</h1>
-            <div className="text-gray-600">Session ID: {sessionId}</div>
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-100">
+        <Navbar showLogout={true} onLogout={handleLogout} />
+        <div className="flex flex-col items-center justify-center pt-10 p-4">
+          <div className="bg-red-50 border border-red-200 rounded p-4 text-red-700 max-w-md w-full text-center">
+            <p className="font-medium">Error</p>
+            <p className="text-sm mt-1">{error}</p>
+            <button
+              onClick={() => navigate('/dashboard')}
+              className="mt-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+            >
+              Return to Dashboard
+            </button>
           </div>
+        </div>
+      </div>
+    );
+  }
 
-          {currentQuestion && (
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold mb-4">Current Question</h2>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-lg mb-2">{currentQuestion.text}</p>
-                <div className="flex justify-between items-center mt-4">
-                  <div className="text-gray-600">
-                    Question {currentQuestion.number} of {currentQuestion.total}
-                  </div>
-                  <div className="text-gray-600">
-                    Time Left: {timeLeft}s
+  return (
+    <div className="min-h-screen bg-gray-100">
+      <Navbar showLogout={true} onLogout={handleLogout} />
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-2xl font-bold">Session Control</h1>
+              <div className="text-gray-600">Session ID: {sessionId}</div>
+            </div>
+
+            {currentQuestion && (
+              <div className="mb-6">
+                <h2 className="text-xl font-semibold mb-4">Current Question</h2>
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <p className="text-lg mb-2">{currentQuestion.text}</p>
+                  <div className="flex justify-between items-center mt-4">
+                    <div className="text-gray-600">
+                      Question {currentQuestion.number} of {currentQuestion.total}
+                    </div>
+                    <div className="text-gray-600">
+                      Time Left: {timeLeft}s
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          <div className="flex gap-4">
-            <button
-              onClick={handleAdvance}
-              disabled={actionLoading}
-              className={`px-6 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1 ${
-                actionLoading
-                  ? 'bg-blue-400 cursor-not-allowed'
-                  : 'bg-blue-600 hover:bg-blue-700'
-              } text-white`}
-            >
-              {actionLoading ? 'Processing...' : 'Advance to Next Question'}
-            </button>
-            <button
-              onClick={handleStop}
-              disabled={actionLoading}
-              className={`px-6 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${
-                actionLoading
-                  ? 'bg-red-400 cursor-not-allowed'
-                  : 'bg-red-600 hover:bg-red-700'
-              } text-white`}
-            >
-              {actionLoading ? 'Processing...' : 'Stop Session'}
-            </button>
+            <div className="flex gap-4">
+              <button
+                onClick={handleAdvance}
+                disabled={actionLoading}
+                className={`px-6 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 flex-1 ${
+                  actionLoading
+                    ? 'bg-blue-400 cursor-not-allowed'
+                    : 'bg-blue-600 hover:bg-blue-700'
+                } text-white`}
+              >
+                {actionLoading ? 'Processing...' : 'Advance to Next Question'}
+              </button>
+              <button
+                onClick={handleStop}
+                disabled={actionLoading}
+                className={`px-6 py-3 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 ${
+                  actionLoading
+                    ? 'bg-red-400 cursor-not-allowed'
+                    : 'bg-red-600 hover:bg-red-700'
+                } text-white`}
+              >
+                {actionLoading ? 'Processing...' : 'Stop Session'}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {showStopPopup && (
-        <StopGamePopup
-          onClose={() => setShowStopPopup(false)}
-          onViewResults={handleViewResults}
-        />
-      )}
+        {showStopPopup && (
+          <StopGamePopup
+            onClose={() => setShowStopPopup(false)}
+            onViewResults={handleViewResults}
+          />
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
 } 
