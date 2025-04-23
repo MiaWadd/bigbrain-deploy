@@ -64,17 +64,14 @@ const processApiResults = async (apiData, sessionId) => {
     }
     let points = game[0].questions[index].points;
     let duration = game[0].questions[index].duration;
-    const score = player.answers.reduce((acc, answer) => {
-      if (!answer.correct) return acc;
-      
+    const score = player.answers.reduce((acc, answer) => {      
       const start = new Date(answer.questionStartedAt);
       const end = new Date(answer.answeredAt);
       const timeTaken = ((end - start) / 1000).toFixed(2);
       const adjustedPoints = ((1 - ((timeTaken / duration) / 2)) * points).toFixed(2);
-      return acc + adjustedPoints;
+      return Number(acc) + Number(adjustedPoints);
     }, 0);
-
-    return { ...player, score: parseFloat(score) }; 
+    return { ...player, score: parseFloat(score.toFixed(2)) }; 
   });
 
   // 2. Calculate Question Results (Correct % and Avg Time)
