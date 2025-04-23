@@ -137,7 +137,7 @@ function CreateGameModal({ isOpen, onClose, onCreateGame }) {
               id="gameName"
               value={gameName}
               onChange={(e) => setGameName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
               placeholder="Enter game name"
             />
             {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
@@ -152,7 +152,7 @@ function CreateGameModal({ isOpen, onClose, onCreateGame }) {
               id="jsonFile"
               accept=".json"
               onChange={handleFileChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600"
             />
             {jsonError && <p className="mt-1 text-sm text-red-600">{jsonError}</p>}
             <p className="mt-1 text-xs text-gray-500">
@@ -170,7 +170,7 @@ function CreateGameModal({ isOpen, onClose, onCreateGame }) {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+              className="px-4 py-2 bg-blue-700 text-white rounded-md hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
             >
               Create Game
             </button>

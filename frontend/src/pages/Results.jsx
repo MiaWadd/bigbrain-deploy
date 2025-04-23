@@ -66,7 +66,7 @@ function Results() {
                 <p>Time Taken: {timeTaken} seconds</p>
                 <p>
                   Result:{' '}
-                  <span className={item.correct ? 'text-green-600' : 'text-red-600'}>
+                  <span className={item.correct ? 'text-green-800' : 'text-red-800'}>
                     {item.correct ? 'Correct' : 'Incorrect'}
                   </span>
                 </p>

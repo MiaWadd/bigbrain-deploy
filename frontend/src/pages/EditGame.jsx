@@ -258,19 +258,20 @@ function EditGame() {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-gray-400 text-sm">No thumbnail</span>
+                <span className="text-gray-600 text-sm">No thumbnail</span>
               )}
             </div>
             <div>
               <input
                 type="file"
+                id="upload-thumbnail"
                 accept="image/*"
                 onChange={handleThumbnailChange}
-                className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                className="block w-full text-md text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-800 hover:file:bg-blue-100"
               />
-              <p className="mt-1 text-sm text-gray-500">
+              <label for="upload-thumbnail" className="mt-1 text-md text-gray-600">
                 Upload a new thumbnail image
-              </p>
+              </label>
             </div>
           </div>
         </div>
@@ -282,7 +283,7 @@ function EditGame() {
           <h2 className="text-lg font-semibold">Questions</h2>
           <button
             onClick={handleAddQuestion}
-            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+            className="px-4 py-2 bg-green-700 text-white rounded-md hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-600 focus:ring-offset-2"
           >
             Add Question
           </button>
