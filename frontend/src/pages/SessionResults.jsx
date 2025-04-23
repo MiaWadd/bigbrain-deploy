@@ -100,7 +100,7 @@ const processApiResults = (apiData) => {
 };
 
 
-function SessionResults({ token, updateToken }) {
+function SessionResults() {
   const { sessionId } = useParams();
   const navigate = useNavigate();
   const [processedData, setProcessedData] = useState({ players: [], questionResults: [], totalPlayers: 0 });
@@ -110,6 +110,7 @@ function SessionResults({ token, updateToken }) {
   // Fetch results
   useEffect(() => {
     const fetchResults = async () => {
+      const token = localStorage.getItem('token');
       if (!token) {
         setError('Authentication token not found.');
         setLoading(false);
@@ -141,13 +142,7 @@ function SessionResults({ token, updateToken }) {
     };
 
     fetchResults();
-  }, [sessionId, token]);
-
-  // Logout handler for Navbar
-  const handleLogout = () => {
-    updateToken(null);
-    navigate('/login');
-  };
+  }, [sessionId]);
 
   // --- Prepare data for components (now uses processedData) ---
 
@@ -229,7 +224,10 @@ function SessionResults({ token, updateToken }) {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar showLogout={true} onLogout={handleLogout} />
+      <Navbar showLogout={true} onLogout={() => {
+        localStorage.setItem('token', '');
+        navigate('/login');
+      }} />
       <div className="container mx-auto px-4 py-8">
         <h1 className="text-3xl font-bold mb-6 text-center">Session Results</h1>
         <p className="mb-6 text-center text-gray-600">Session ID: {sessionId}</p>

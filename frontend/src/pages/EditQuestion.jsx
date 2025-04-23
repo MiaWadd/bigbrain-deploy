@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -18,7 +18,6 @@ function EditQuestion() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
-  const [game, setGame] = useState(null);
 
   // Question state with proper initialization
   const [questionData, setQuestionData] = useState({
@@ -89,7 +88,6 @@ function EditQuestion() {
         media: question.media || { type: null, url: '' },
       };
 
-      setGame(game);
       setQuestionData(processedQuestion);
       setError(null);
     } catch (err) {
@@ -282,11 +280,11 @@ function EditQuestion() {
       <div className="space-y-6 max-w-3xl">
         {/* Question Type */}
         <div>
-          <label for="question-type" className="block text-sm font-medium text-gray-700 mb-2">
+          <label htmlFor="question-type" className="block text-sm font-medium text-gray-700 mb-2">
             Question Type
           </label>
           <select
-           id="question-type"
+            id="question-type"
             value={questionData.type}
             onChange={(e) => {
               setQuestionData(prev => ({
@@ -320,7 +318,7 @@ function EditQuestion() {
         {/* Time Limit and Points */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label for="duration" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-2">
               Time Limit (seconds)
             </label>
             <input
@@ -333,7 +331,7 @@ function EditQuestion() {
             />
           </div>
           <div>
-            <label for="points" className="block text-sm font-medium text-gray-700 mb-2">
+            <label htmlFor="points" className="block text-sm font-medium text-gray-700 mb-2">
               Points
             </label>
             <input

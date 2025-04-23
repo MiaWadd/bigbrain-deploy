@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from '../components/Navbar';
@@ -6,7 +6,7 @@ import Navbar from '../components/Navbar';
 const BACKEND_PORT = 5005;
 const API_URL = `http://localhost:${BACKEND_PORT}`;
 
-function PastSessions({ token, updateToken }) {
+function PastSessions() {
   const { gameId } = useParams();
   const navigate = useNavigate();
   const [game, setGame] = useState(null);
@@ -15,6 +15,7 @@ function PastSessions({ token, updateToken }) {
 
   useEffect(() => {
     const fetchGame = async () => {
+      const token = localStorage.getItem('token');
       try {
         const response = await axios.get(`${API_URL}/admin/games`, {
           headers: {
@@ -36,7 +37,7 @@ function PastSessions({ token, updateToken }) {
     };
 
     fetchGame();
-  }, [gameId, token]);
+  }, [gameId]);
 
   const handleViewResults = (sessionId) => {
     navigate(`/session/${sessionId}/results`);
@@ -46,7 +47,7 @@ function PastSessions({ token, updateToken }) {
     return (
       <div className="min-h-screen bg-gray-100">
         <Navbar showLogout={true} onLogout={() => {
-          updateToken(null);
+          localStorage.setItem('token', null);
           navigate('/login');
         }} />
         <div className="container mx-auto px-4 py-8">
@@ -60,7 +61,7 @@ function PastSessions({ token, updateToken }) {
     return (
       <div className="min-h-screen bg-gray-100">
         <Navbar showLogout={true} onLogout={() => {
-          updateToken(null);
+          localStorage.setItem('token', '');
           navigate('/login');
         }} />
         <div className="container mx-auto px-4 py-8">
@@ -76,7 +77,7 @@ function PastSessions({ token, updateToken }) {
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar showLogout={true} onLogout={() => {
-        updateToken(null);
+        localStorage.setItem('token', null);
         navigate('/login');
       }} />
       <div className="container mx-auto px-4 py-8">

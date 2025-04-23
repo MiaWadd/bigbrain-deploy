@@ -3,6 +3,7 @@ import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import globals from "globals";
+import cypress from "eslint-plugin-cypress";
 
 export default [
   { ignores: ["dist", "src/__test__", "**/*config.js"] },
@@ -48,6 +49,24 @@ export default [
       "react/jsx-one-expression-per-line": "off",
       indent: ["error", 2],
       "react/prop-types": "off",
+    },
+  },
+  {
+    files: ["cypress/**/*.cy.{js,jsx,ts,tsx}", "**/*.cy.{js,jsx,ts,tsx}"],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        ...globals.mocha,
+        cy: true,
+        Cypress: true,
+      },
+    },
+    plugins: {
+      cypress,
+    },
+    rules: {
+      ...cypress.configs.recommended.rules,
     },
   },
 ];

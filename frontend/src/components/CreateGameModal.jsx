@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 function CreateGameModal({ isOpen, onClose, onCreateGame }) {
   const [gameName, setGameName] = useState('');

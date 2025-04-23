@@ -47,10 +47,11 @@ describe("Login Component", () => {
     expect(screen.getByLabelText(/Password/i).value).toBe('password123');
   });
 
-  it("Redirects to /dashboard if token exists", () => {
+  it('Redirects to /dashboard if token exists', () => {
+    localStorage.setItem('token', 'mockToken');
     render(
       <MemoryRouter>
-        <Login token={'mockToken'} updateToken={() => {}} />
+        <Login />
       </MemoryRouter>
     );
     expect(mockedNavigate).toHaveBeenCalledWith('/dashboard');
@@ -65,7 +66,7 @@ describe("Login Component", () => {
       });
   });
 
-  it("Navigates to /home TODO dashboard after successful login", async () => {
+  it("Navigates to /dashboard after successful login", async () => {
     axios.post.mockResolvedValue({
       data: {
         token: 'mockToken123',
@@ -74,9 +75,7 @@ describe("Login Component", () => {
     fireEvent.change(screen.getByLabelText(/Email/i), { target: { value: 'test@example.com' } });
     fireEvent.change(screen.getByLabelText(/Password/i), { target: { value: 'password123' } });
     fireEvent.click(screen.getByRole('button', { name: /Login/i }));
-
     await waitFor(() => {
-      expect(mockUpdateToken).toHaveBeenCalledWith('mockToken123');
       expect(mockedNavigate).toHaveBeenCalledWith('/dashboard');
     });
   });

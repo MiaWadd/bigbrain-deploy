@@ -64,7 +64,7 @@ export default function Lobby() {
           console.error('Error polling game status:', errorMessage);
         }
       }
-    }, 3000);
+    }, 1000);
 
     return () => clearInterval(poll);
   }, [navigate]);

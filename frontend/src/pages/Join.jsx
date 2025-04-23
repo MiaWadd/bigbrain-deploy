@@ -36,8 +36,8 @@ function JoinGame() {
       if (response.data.playerId) {
         // Store playerId in localStorage
         localStorage.setItem('playerId', response.data.playerId);
-        localStorage.setItem('duration', []);
-        localStorage.setItem('points', []);
+        localStorage.setItem('duration', '[]');
+        localStorage.setItem('points', '[]');
         // Navigate to lobby to wait for game to start
         navigate('/lobby');
       } else {
@@ -72,7 +72,7 @@ function JoinGame() {
           <h1 className="text-3xl text-center font-large text-black">Join a Game</h1>   
           <form onSubmit={joinGame}>
             <div className="max-w-sm mx-auto mt-5">
-              <label for="session-id" className="text-md font-normal text-black">Session ID</label>
+              <label htmlFor="session-id" className="text-md font-normal text-black">Session ID</label>
               <input
                 id="session-id"
                 value={sessionId} 
@@ -83,7 +83,7 @@ function JoinGame() {
               />
             </div>
             <div className="max-w-sm mx-auto mt-5">
-              <label for="player-name" className="text-md font-normal text-black">Name</label>
+              <label htmlFor="player-name" className="text-md font-normal text-black">Name</label>
               <input
                 id="player-name"
                 value={name} 

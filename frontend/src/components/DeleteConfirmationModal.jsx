@@ -1,5 +1,3 @@
-import React from 'react';
-
 function DeleteConfirmationModal({ isOpen, onClose, onConfirm, gameName }) {
   if (!isOpen) return null;
 
@@ -9,7 +7,7 @@ function DeleteConfirmationModal({ isOpen, onClose, onConfirm, gameName }) {
         <h2 className="text-xl font-semibold mb-4 text-gray-900">Delete Game</h2>
         
         <p className="text-gray-600 mb-6">
-          Are you sure you want to delete <span className="font-medium text-gray-900">"{gameName}"</span>? 
+          Are you sure you want to delete <span className="font-medium text-gray-900">&quot;{gameName}&quot;</span>? 
           This action cannot be undone.
         </p>
 
