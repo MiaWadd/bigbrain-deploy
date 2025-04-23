@@ -74,7 +74,7 @@ function Results() {
             }
             total += parseFloat(adv);
           });
-          return total;
+          return total.toFixed(2);
         })()}
       </div>
       <div className="space-y-4 px-4 max-w-xl mx-auto">
