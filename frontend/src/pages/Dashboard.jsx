@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import CreateGameModal from '../components/CreateGameModal';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import GameCard from '../components/GameCard';
@@ -10,7 +10,7 @@ import Navbar from '../components/Navbar';
 const BACKEND_PORT = 5005;
 const API_URL = `http://localhost:${BACKEND_PORT}`;
 
-function Dashboard({ token, updateToken }) {
+function Dashboard() {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -187,10 +187,10 @@ function Dashboard({ token, updateToken }) {
     fetchGames();
   }, []);
 
-  const calculateTotalDuration = (questions) => {
-    if (!Array.isArray(questions)) return 0;
-    return questions.reduce((total, question) => total + (question.duration || 0), 0);
-  };
+  // const calculateTotalDuration = (questions) => {
+  //   if (!Array.isArray(questions)) return 0;
+  //   return questions.reduce((total, question) => total + (question.duration || 0), 0);
+  // };
 
   if (loading) {
     return <div className="p-8 text-center">Loading games...</div>;
@@ -213,7 +213,7 @@ function Dashboard({ token, updateToken }) {
   return (
     <div className="min-h-screen bg-gray-100">
       <Navbar showLogout={true} onLogout={() => {
-        updateToken(null);
+        localStorage.setItem('token', null);
         navigate('/login');
       }} />
 

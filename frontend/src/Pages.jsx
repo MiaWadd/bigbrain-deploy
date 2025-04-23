@@ -2,11 +2,10 @@ console.log("Pages.jsx loaded");
 
 
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 import {
   Routes,
   Route,
-  Link,
   useNavigate,
 } from "react-router-dom";
 
@@ -47,29 +46,29 @@ function Pages() {
     setPlayerId(playerId);
   }
 
-  const logout = async () => {
-    const currentToken = localStorage.getItem('token');
-    if (!currentToken) {
-      console.error("No token found for logout");
-      localStorage.removeItem('token');
-      setToken(null);
-      navigate('/login');
-      return;
-    }
-    try {
-      await axios.post('http://localhost:5005/admin/auth/logout', {}, {
-        headers: {
-          'Authorization': `Bearer ${currentToken}`,
-        }
-      });
-    } catch (err) {
-      console.error("Logout API call failed:", err.response?.data?.error || err.message);
-    } finally {
-      localStorage.removeItem('token');
-      setToken(null);
-      navigate('/login');
-    }
-  };
+  // const logout = async () => {
+  //   const currentToken = localStorage.getItem('token');
+  //   if (!currentToken) {
+  //     console.error("No token found for logout");
+  //     localStorage.removeItem('token');
+  //     setToken(null);
+  //     navigate('/login');
+  //     return;
+  //   }
+  //   try {
+  //     await axios.post('http://localhost:5005/admin/auth/logout', {}, {
+  //       headers: {
+  //         'Authorization': `Bearer ${currentToken}`,
+  //       }
+  //     });
+  //   } catch (err) {
+  //     console.error("Logout API call failed:", err.response?.data?.error || err.message);
+  //   } finally {
+  //     localStorage.removeItem('token');
+  //     setToken(null);
+  //     navigate('/login');
+  //   }
+  // };
 
   return (
     <>

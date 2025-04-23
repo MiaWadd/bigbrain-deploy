@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 function SessionPopup({ sessionId, onClose }) {
   const [copySuccess, setCopySuccess] = useState('');
@@ -11,7 +11,7 @@ function SessionPopup({ sessionId, onClose }) {
       await navigator.clipboard.writeText(playUrl);
       setCopySuccess('Copied!');
       setTimeout(() => setCopySuccess(''), 2000);
-    } catch (err) {
+    } catch {
       setCopySuccess('Failed to copy');
     }
   };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import SessionPopup from './SessionPopup';
@@ -22,6 +22,13 @@ function GameCard({ game, onDelete }) {
       setIsActive(true);
     }
   }, [game]);
+
+  // Check session status on mount and when sessionId changes //TODO DOes this work here?
+  useEffect(() => {
+    if (game?.id) {
+      checkSessionStatus();
+    }
+  }, [game?.active, sessionId]);
 
   if (!game || typeof game !== 'object') {
     return null;
@@ -56,7 +63,7 @@ function GameCard({ game, onDelete }) {
           }
         });
         setIsActive(response.status === 200);
-      } catch (err) {
+      } catch {
         setIsActive(false);
         setSessionId(null);
       }
@@ -171,12 +178,12 @@ function GameCard({ game, onDelete }) {
     }
   };
 
-  // Check session status on mount and when sessionId changes
-  useEffect(() => {
-    if (game?.id) {
-      checkSessionStatus();
-    }
-  }, [game?.active, sessionId]);
+  // // Check session status on mount and when sessionId changes
+  // useEffect(() => {
+  //   if (game?.id) {
+  //     checkSessionStatus();
+  //   }
+  // }, [game?.active, sessionId]);
 
   const gameName = typeof game?.name === 'string' ? game.name : 'Untitled Game';
   const gameId = game?.id;
