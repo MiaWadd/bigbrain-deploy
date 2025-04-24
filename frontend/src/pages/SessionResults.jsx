@@ -62,14 +62,14 @@ const processApiResults = async (apiData, sessionId) => {
     if (game.length === 0) {
       return { ...player, score: parseFloat(0) };
     }
-    let points = game[0].questions[index].points;
-    let duration = game[0].questions[index].duration;
-    const score = player.answers.reduce((acc, answer) => {     
+    const score = player.answers.reduce((acc, answer, index) => {    
+      let points = game[0].questions[index].points;
+      let duration = game[0].questions[index].duration; 
       let adjustedPoints = 0;
       if (answer.correct) {
         const start = new Date(answer.questionStartedAt);
         const end = new Date(answer.answeredAt);
-        const timeTaken = ((end - start) / 1000).toFixed(0);
+        const timeTaken = ((end - start) / 1000).toFixed(2);
         adjustedPoints = ((1 - ((timeTaken / duration) / 2)) * points).toFixed(0);
       }
       return Number(acc) + Number(adjustedPoints);
