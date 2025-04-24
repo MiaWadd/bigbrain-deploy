@@ -68,13 +68,13 @@ function Results() {
             const start = new Date(item.questionStartedAt);
             const end = new Date(item.answeredAt);
             const timeTaken = ((end - start) / 1000).toFixed(2);
-            let adv = ((1 - ((timeTaken / duration[index]) / 2)) * points[index]).toFixed(2);
+            let adv = ((1 - ((timeTaken / duration[index]) / 2)) * points[index]).toFixed(0);
             if (isNaN(adv) || !item.correct) {
               adv = 0;
             }
             total += parseFloat(adv);
           });
-          return total.toFixed(2);
+          return total.toFixed(0);
         })()}
       </div>
       <div className="space-y-4 px-4 max-w-xl mx-auto">
@@ -82,7 +82,7 @@ function Results() {
           const start = new Date(item.questionStartedAt);
           const end = new Date(item.answeredAt);
           const timeTaken = ((end - start) / 1000).toFixed(2);
-          const adv = ((1 - ((timeTaken / duration[index]) / 2)) * points[index]).toFixed(2);
+          const adv = ((1 - ((timeTaken / duration[index]) / 2)) * points[index]).toFixed(0);
           return (
             <div key={index} className="p-4 flex justify-between items-center">
               <div>

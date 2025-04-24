@@ -143,7 +143,7 @@ function Play() {
     setTimeout(async () => {
       try {
         const response = await axios.get(`http://localhost:5005/play/${playerId}/answer`);
-        setCorrectAnswers(response.data.answerIds);
+        setCorrectAnswers(response.data.answers);
       } catch (error) {
         console.log(error);
       }
