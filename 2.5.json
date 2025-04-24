@@ -48,10 +48,10 @@
       "duration": 20,
       "timeLimit": 20,
       "answers": [
-        "True",
-        "False"
+        "False",
+        "True"
       ],
-      "correctAnswers": [1],
+      "correctAnswers": [0],
       "media": {
         "type": null,
         "url": ""

@@ -88,6 +88,15 @@ function EditQuestion() {
         media: question.media || { type: null, url: '' },
       };
 
+      // For judgement questions, ensure answers are ['False', 'True'] and correctAnswers is [0] or [1]
+      if (processedQuestion.type === QUESTION_TYPES.JUDGEMENT) {
+        processedQuestion.answers = ['False', 'True'];
+        // If no correct answer is set, default to [0] (False)
+        if (processedQuestion.correctAnswers.length === 0) {
+          processedQuestion.correctAnswers = [0];
+        }
+      }
+
       setQuestionData(processedQuestion);
       setError(null);
     } catch (err) {
@@ -113,10 +122,12 @@ function EditQuestion() {
     }
 
     if (questionData.type === QUESTION_TYPES.JUDGEMENT) {
-      if (!questionData.answers[0]?.trim()) {
-        setError('Statement is required for judgement questions');
+      if (questionData.correctAnswers.length !== 1) {
+        setError('Please select either True or False as the correct answer');
         return;
       }
+      // Ensure answers are ['False', 'True'] for judgement questions
+      questionData.answers = ['False', 'True'];
     } else {
       if (questionData.answers.filter(a => a.trim()).length < 2) {
         setError('At least 2 non-empty answers are required');
@@ -171,6 +182,11 @@ function EditQuestion() {
           id: questionId,
           duration: questionData.timeLimit, // Ensure duration is set for compatibility
         };
+
+        // For judgement questions, ensure answers are ['False', 'True']
+        if (updatedQuestion.type === QUESTION_TYPES.JUDGEMENT) {
+          updatedQuestion.answers = ['False', 'True'];
+        }
 
         // Update the question in the game
         const updatedQuestions = [...game.questions];
@@ -393,7 +409,7 @@ function EditQuestion() {
         <div>
           <div className="flex justify-between items-center mb-2">
             <label className="block text-sm font-medium text-gray-700">
-              {questionData.type === QUESTION_TYPES.JUDGEMENT ? 'Statement' : 'Answers'}
+              {questionData.type === QUESTION_TYPES.JUDGEMENT ? 'Correct Answer' : 'Answers'}
             </label>
             {questionData.type !== QUESTION_TYPES.JUDGEMENT && questionData.answers.length < 6 && (
               <button
@@ -409,41 +425,42 @@ function EditQuestion() {
           </div>
           <div className="space-y-2">
             {questionData.type === QUESTION_TYPES.JUDGEMENT ? (
-              // Judgement question - single statement with true/false
+              // Judgement question - radio buttons for true/false
+              // Note: False is index 0, True is index 1
               <div className="flex items-center gap-4">
-                <input
-                  type="text"
-                  value={questionData.answers[0] || ''}
-                  onChange={(e) => {
-                    setQuestionData(prev => ({
-                      ...prev,
-                      answers: [e.target.value],
-                      correctAnswers: prev.correctAnswers, // Maintain current true/false state
-                    }));
-                  }}
-                  placeholder="Enter the statement to judge as true or false"
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
                 <div className="flex items-center gap-2">
-                  <label className="text-sm font-medium text-gray-700">False</label>
-                  <div 
-                    className={`w-14 h-7 flex items-center rounded-full p-1 cursor-pointer ${
-                      questionData.correctAnswers.includes(0) ? 'bg-blue-600' : 'bg-gray-300'
-                    }`}
-                    onClick={() => {
+                  <input
+                    type="radio"
+                    id="false"
+                    name="judgement"
+                    checked={questionData.correctAnswers.includes(0)}
+                    onChange={() => {
                       setQuestionData(prev => ({
                         ...prev,
-                        correctAnswers: prev.correctAnswers.includes(0) ? [] : [0],
+                        correctAnswers: [0], // False is index 0
+                        answers: ['False', 'True'], // Ensure consistent answer order
                       }));
                     }}
-                  >
-                    <div
-                      className={`bg-white w-5 h-5 rounded-full shadow-md transform transition-transform ${
-                        questionData.correctAnswers.includes(0) ? 'translate-x-7' : ''
-                      }`}
-                    />
-                  </div>
-                  <label className="text-sm font-medium text-gray-700">True</label>
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  />
+                  <label htmlFor="false" className="text-sm font-medium text-gray-700">False</label>
+                </div>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    id="true"
+                    name="judgement"
+                    checked={questionData.correctAnswers.includes(1)}
+                    onChange={() => {
+                      setQuestionData(prev => ({
+                        ...prev,
+                        correctAnswers: [1], // True is index 1
+                        answers: ['False', 'True'], // Ensure consistent answer order
+                      }));
+                    }}
+                    className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  />
+                  <label htmlFor="true" className="text-sm font-medium text-gray-700">True</label>
                 </div>
               </div>
             ) : (

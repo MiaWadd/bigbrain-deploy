@@ -102,7 +102,8 @@ function Play() {
         setCorrectAnswers([]);
         setTimesUp(false);
         if (questionData.type === 'judgement') {
-          setAnswers(['True', "False"]);
+          // Ensure False is index 0 and True is index 1
+          setAnswers(['False', 'True']);
         } else {
           setAnswers(questionData.answers);
         }
