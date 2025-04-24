@@ -58,7 +58,7 @@ const processApiResults = async (apiData, sessionId) => {
   const game = await getGame({ sessionId });
 
   // 1. Calculate Player Scores
-  const playersWithScores =  apiData.map((player, index) => {
+  const playersWithScores =  apiData.map((player) => {
     if (game.length === 0) {
       return { ...player, score: parseFloat(0) };
     }
