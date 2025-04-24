@@ -68,6 +68,8 @@ function Results() {
             const start = new Date(item.questionStartedAt);
             const end = new Date(item.answeredAt);
             const timeTaken = ((end - start) / 1000).toFixed(2);
+            console.log(timeTaken, points[index], duration[index]);
+
             let adv = ((1 - ((timeTaken / duration[index]) / 2)) * points[index]).toFixed(0);
             if (isNaN(adv) || !item.correct) {
               adv = 0;
