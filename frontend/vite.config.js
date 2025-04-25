@@ -14,7 +14,7 @@ export default defineConfig({
     setupFiles: './src/setup.js',
   },
   server: {
-    port: 3001,
+    port: 3000,
   },
 
 })
