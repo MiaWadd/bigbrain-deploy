@@ -47,6 +47,19 @@ describe('Happy Path of a Player', () => {
     cy.contains('button', '+ Add Answer').click();
     cy.get('input[placeholder="Answer 2"]').type('Test Answer 2');
     cy.contains('button', 'Save Question').click();
+    cy.contains('button', 'Add Question').click();
+    cy.contains('Question 2: New Question')
+      .parent()
+      .siblings()
+      .contains('Edit')
+      .click();
+    cy.url().should('include', '/question');
+    cy.contains('button', '+ Add Answer').click();
+    cy.get('input[placeholder="Answer 1"]').type('Test Answer 1');
+    cy.get('input[type="checkbox"]').check();
+    cy.contains('button', '+ Add Answer').click();
+    cy.get('input[placeholder="Answer 2"]').type('Test Answer 2');
+    cy.contains('button', 'Save Question').click();
     // Start Game
     cy.contains('button', '← Back to Dashboard').click();
     cy.url().should('include', '/dashboard');
@@ -77,6 +90,19 @@ describe('Happy Path of a Player', () => {
     cy.contains('button', 'Test Answer 1').click();
   })
 
+  it('Advances to the next question', () => {
+    cy.visit('/dashboard');
+    cy.contains('button', 'Control Session').click();
+    cy.url().should('include', '/session');
+    cy.contains('button', 'Advance to Next Question').click();
+  })
+
+  it('Answers a question', () => {
+    cy.visit('/play');
+    cy.contains('button', 'Test Answer 1').click();
+    cy.contains('button', 'Test Answer 2').click();
+  })
+
   it('Ends the game via advance', () => {
     cy.visit('/dashboard');
     cy.contains('button', 'Control Session').click();
@@ -89,6 +115,7 @@ describe('Happy Path of a Player', () => {
     cy.url().should('include', '/results');
     cy.contains('Your Results');
     cy.contains('Result: Correct');
+    cy.contains('Result: Incorrect');
   })
 });
 
