@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Navbar from '../components/Navbar';
+import NavBar from '../components/NavBar';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -241,7 +241,7 @@ function SessionResults() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar showLogout={true} onLogout={() => {
+      <NavBar showLogout={true} onLogout={() => {
         localStorage.setItem('token', '');
         navigate('/login');
       }} />

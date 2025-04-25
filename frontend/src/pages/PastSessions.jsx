@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import Navbar from '../components/Navbar';
+import NavBar from '../components/NavBar';
 
 const BACKEND_PORT = 5005;
 const API_URL = `http://localhost:${BACKEND_PORT}`;
@@ -46,7 +46,7 @@ function PastSessions() {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-100">
-        <Navbar showLogout={true} onLogout={() => {
+        <NavBar showLogout={true} onLogout={() => {
           localStorage.setItem('token', null);
           navigate('/login');
         }} />
@@ -60,7 +60,7 @@ function PastSessions() {
   if (error) {
     return (
       <div className="min-h-screen bg-gray-100">
-        <Navbar showLogout={true} onLogout={() => {
+        <NavBar showLogout={true} onLogout={() => {
           localStorage.setItem('token', '');
           navigate('/login');
         }} />
@@ -76,7 +76,7 @@ function PastSessions() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar showLogout={true} onLogout={() => {
+      <NavBar showLogout={true} onLogout={() => {
         localStorage.setItem('token', null);
         navigate('/login');
       }} />

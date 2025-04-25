@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import CreateGameModal from '../components/CreateGameModal';
 import DeleteConfirmationModal from '../components/DeleteConfirmationModal';
 import GameCard from '../components/GameCard';
-import Navbar from '../components/Navbar';
+import NavBar from '../components/NavBar';
 
 // Define the backend URL
 const BACKEND_PORT = 5005;
@@ -207,7 +207,7 @@ function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar showLogout={true} onLogout={() => {
+      <NavBar showLogout={true} onLogout={() => {
         localStorage.setItem('token', '');
         navigate('/login');
       }} />
