@@ -17,7 +17,20 @@ also required to write a test for another path through the program, describing t
 ### "Happy Path" of a Player
 
 - As we have already tested a portion of the admins tasks in the required "Happy Path" of an admin tests. We decideded to test the path of a player in our second UI test. 
-- The first step in this test was to create a game with two questions that the player can then play. 
+- The first step in this test was to create a game with two questions that the player can then play. Following this, we tested the following series of events:
+
+1) Admin: Starts a new session
+2) Player: Joins the session and is directed to the Lobby
+3) Admin: Advances to the first question
+4) Player: Answers the question correctly
+5) Admin: Advances to the next question
+6) Player: Answers the question correctly
+7) Player: Changes their answer to the wrong answer
+8) Admin: Ends game
+9) Player: Is redirected to the results page and has one correct answer and one incorrect answer
+
+- This test covers a significant amount of the functionaity of our webpage and ensures that players can start, play and finish a game correctly.  
+- Overall, the UI tests proved incredibly valuable to ensure a coreect and functioning basic usage of our webpage. 
 
 ## OTHER? 
-- In additon to these tests we also did user tess idk something else here abot that. 
+- In additon to UI and componant testing, we completed some user testing to ensure our platform was intuative and to test edge cases not covered by our other testing methods. 
