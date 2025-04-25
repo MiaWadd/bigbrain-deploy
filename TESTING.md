@@ -32,5 +32,5 @@ also required to write a test for another path through the program, describing t
 - This test covers a significant amount of the functionaity of our webpage and ensures that players can start, play and finish a game correctly.  
 - Overall, the UI tests proved incredibly valuable to ensure a coreect and functioning basic usage of our webpage. 
 
-## OTHER? 
+## Additional Testing
 - In additon to UI and componant testing, we completed some user testing to ensure our platform was intuative and to test edge cases not covered by our other testing methods. 
